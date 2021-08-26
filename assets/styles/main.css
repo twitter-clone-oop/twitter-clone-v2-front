@@ -1,0 +1,33 @@
+:root {
+  --blue: #1fa2f1;
+  --buttonHoverBg: #d4edff;
+  --lightGray: rgb(230, 236, 240);
+  --spacing: 15px;
+}
+
+h1 {
+  font-size: 20px;
+  font-weight: 800;
+  margin: 0;
+}
+
+.mainSectionContainer {
+  padding: 0;
+  border-left: 1px solid var(--lightGray);
+  border-right: 1px solid var(--lightGray);
+  display: flex;
+  flex-direction: column;
+}
+
+.titleContainer {
+  height: 55px;
+  padding: 0 var(--spacing);
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--lightGray);
+  flex-shrink: 0;
+}
+
+.titleContainer h1 {
+  flex: 1;
+}
