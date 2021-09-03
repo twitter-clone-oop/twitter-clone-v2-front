@@ -57,6 +57,22 @@ class PostForm extends HTMLElement {
     </div>
     `;
   }
+
+  connectedCallback() {
+    const postTextarea = this.shadowRoot.querySelector("#postTextarea");
+
+    const postButton = this.shadowRoot.querySelector("#submitPostButton");
+
+    postTextarea.addEventListener("keyup", (event) => {
+      const value = postTextarea.value.trim();
+      if (value === "") {
+        return postButton.setAttribute("disabled", "");
+      }
+      postButton.removeAttribute("disabled");
+    });
+  }
+
+  _changeButtonState() {}
 }
 
 customElements.define("create-post-form", PostForm);
