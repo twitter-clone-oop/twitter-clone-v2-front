@@ -53,14 +53,13 @@ class PostForm extends HTMLElement {
       <div class="textareaContainer">
         <textarea id="postTextarea" placeholder="What's happening?"></textarea>
         <button id="submitPostButton" disabled>Post</button>
-      </div>
+      </div> 
     </div>
     `;
   }
 
   connectedCallback() {
     const postTextarea = this.shadowRoot.querySelector("#postTextarea");
-
     const postButton = this.shadowRoot.querySelector("#submitPostButton");
 
     postTextarea.addEventListener("keyup", (event) => {
@@ -70,9 +69,16 @@ class PostForm extends HTMLElement {
       }
       postButton.removeAttribute("disabled");
     });
+
+    //POST Button click handler 작성
+    //custom event 발생 (createPost)
+    postButton.addEventListener("click", this._createPostHandler.bind(this));
   }
 
-  _changeButtonState() {}
+  _createPostHandler() {
+    const createPostEvent = new Event("create-post");
+    this.dispatchEvent(createPostEvent);
+  }
 }
 
 customElements.define("create-post-form", PostForm);
