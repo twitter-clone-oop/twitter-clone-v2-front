@@ -1,8 +1,25 @@
 :root {
   --blue: #1fa2f1;
+  --blueLight: #9bd1f9;
   --buttonHoverBg: #d4edff;
   --lightGray: rgb(230, 236, 240);
   --spacing: 15px;
+}
+
+html,
+body {
+  height: 100%;
+  min-height: 100%;
+  background-color: #fff;
+  font-weight: 300;
+}
+
+* {
+  outline: none !important;
+}
+
+a {
+  color: inherit;
 }
 
 h1 {

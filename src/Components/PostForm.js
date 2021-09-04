@@ -1,4 +1,4 @@
-class PostForm extends HTMLElement {
+export class PostForm extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: "open" });

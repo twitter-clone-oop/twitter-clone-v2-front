@@ -1,4 +1,4 @@
-class Navbar extends HTMLElement {
+export class Navbar extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: "open" });
@@ -53,9 +53,7 @@ class Navbar extends HTMLElement {
     `;
   }
 
-  connectedCallback() {
-    console.log(123);
-  }
+  connectedCallback() {}
 }
 
 customElements.define("nav-bar", Navbar);
