@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="assets/styles/login.css" />
+  <script src="./src/App/signup.js" defer type="module"></script>
+  <title>Login</title>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="loginContainer">
+      <div class="titleContainer">
+        <img src="assets/images/twitter.png" alt=""> 
+        <h1>Sign Up</h1>
+      </div>
+      <form method="POST" id="signup-form">
+        <p id="errorMessage"></p>
+  
+        <input type="text" name="firstName" id="firstName" placeholder="First name" required>
+        <input type="text" name="lastName" id="lastName" placeholder="Last name" required>
+        <input type="text" name="userName" id="userName" placeholder="User name" required>
+
+        <input type="email" name="email" id="email" placeholder="E-mail" required>
+
+        <input id="password" type="password" id="password" name="password" placeholder="Password" required>
+        <input id="passwordConfirm" type="password" id="passwordConfirm" name="passwordConfirm" placeholder="Confirm Password" required>
+        <input type="submit" value="Register" id="submit-signup">
+      </form>
+  
+      <div class="register-message-container">
+        <a href="/login">Already have an account? Login here</a>
+      </div>
+      
+    </div>
+  </div>
+</body>
+</html>
