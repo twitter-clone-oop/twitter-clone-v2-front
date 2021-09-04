@@ -7,6 +7,8 @@ postForm.addEventListener("create-post", () => {
 
   // fetch("create post url", {
   //   method: "POST",
-  //   body: {},
-  // });
+  //   body: {
+  //     creator,
+  //     content,
+  // },
 });
