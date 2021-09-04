@@ -3,5 +3,10 @@ import { PostForm } from "../Components/PostForm.js";
 
 const postForm = document.querySelector("create-post-form");
 postForm.addEventListener("create-post", () => {
-  console.log("create post btn clicked");
+  const content = postForm.getAttribute("data");
+
+  // fetch("create post url", {
+  //   method: "POST",
+  //   body: {},
+  // });
 });

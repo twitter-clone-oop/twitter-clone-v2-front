@@ -2,6 +2,9 @@ export class PostForm extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: "open" });
+
+    this.postTextarea;
+
     this.shadowRoot.innerHTML = `
     <style>
       .postFormContainer {
@@ -59,11 +62,11 @@ export class PostForm extends HTMLElement {
   }
 
   connectedCallback() {
-    const postTextarea = this.shadowRoot.querySelector("#postTextarea");
+    this.postTextarea = this.shadowRoot.querySelector("#postTextarea");
     const postButton = this.shadowRoot.querySelector("#submitPostButton");
 
-    postTextarea.addEventListener("keyup", (event) => {
-      const value = postTextarea.value.trim();
+    this.postTextarea.addEventListener("keyup", (event) => {
+      const value = this.postTextarea.value.trim();
       if (value === "") {
         return postButton.setAttribute("disabled", "");
       }
@@ -77,6 +80,7 @@ export class PostForm extends HTMLElement {
 
   _createPostHandler() {
     const createPostEvent = new Event("create-post");
+    this.setAttribute("data", this.postTextarea.value);
     this.dispatchEvent(createPostEvent);
   }
 }
