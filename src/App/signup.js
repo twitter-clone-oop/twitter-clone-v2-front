@@ -43,12 +43,18 @@ class Signup {
     let statusCode = response.status;
     response = await response.json();
 
-    if (statusCode >= 200 || statusCode < 400) {
+    console.log("response", response);
+
+    if (statusCode >= 200 && statusCode < 400) {
       alert(response.message);
       location.href = "/login";
     } else {
       //error
-      this._showErrorMessage(response.message);
+      let errorMessage = `${response.message.param} - ${response.message.msg}`;
+
+      console.log(errorMessage);
+
+      this._showErrorMessage(errorMessage);
     }
   }
 
