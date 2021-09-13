@@ -39,7 +39,6 @@ input[type="submit"] {
 .wrapper {
   display: flex;
   justify-content: center;
-  margin-top: 20px;
 }
 
 .loginContainer {
@@ -50,16 +49,17 @@ input[type="submit"] {
   background-color: #fff;
   text-align: center;
   box-shadow: 0 3px 4px rgba(0, 0, 0, 0.3);
+  margin-top: 3rem;
 }
 
-.titleContainer {
+.login__titleContainer {
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
 }
 
-.titleContainer img {
+.login__titleContainer img {
   width: 4rem;
   padding-right: 1.5rem;
 }
@@ -70,5 +70,14 @@ input[type="submit"] {
 }
 
 .register-message-container a {
+  color: blue;
+
   font-size: 1.3rem;
+}
+
+#errorMessage {
+  margin: 1rem;
+  padding: 1rem;
+  color: red;
+  font-weight: 500;
 }
