@@ -16,6 +16,8 @@ class Index {
     this.userId;
     this.expiryDate;
 
+    this.userProfile;
+
     this.isAuth;
 
     this.wrapper = document.querySelector(".wrapper");
@@ -99,10 +101,13 @@ class Index {
     localStorage.removeItem("expiryDate");
   };
 
-  loginSuccessHandler = () => {
+  loginSuccessHandler = async () => {
     this.token = localStorage.getItem("token");
     this.userId = localStorage.getItem("userId");
     this.expiryDate = localStorage.getItem("expiryDate");
+
+    this.userProfile = await this.fetchUserProfile();
+    console.log(this.userProfile);
   };
 
   setAutoLogout = (milliseconds) => {
@@ -128,6 +133,33 @@ class Index {
       localStorage.clear();
       e.returnValue = "";
     });
+  }
+
+  async fetchUserProfile() {
+    // let user = await fetch(`${env.BACKEND_BASE_URL}/user/profile`, {
+    //   headers: {
+    //     Authorization: `Bearer ${this.token}`,
+    //   },
+    // });
+
+    // fetch(`${env.BACKEND_BASE_URL}/user/profile`, {
+    //   headers: {
+    //     Authorization: "Bearer " + this.token,
+    //   },
+    //   method: "GET",
+    // }).then((response) => {
+    //   console.log("done...");
+    // });
+
+    let user = await fetch(`${env.BACKEND_BASE_URL}/user/profile`, {
+      headers: {
+        Authorization: "Bearer " + this.token,
+      },
+      method: "GET",
+    });
+
+    user = await user.json();
+    return user;
   }
 }
 
