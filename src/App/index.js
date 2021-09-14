@@ -1,4 +1,5 @@
 import { Login } from "../App/login.js";
+import { Signup } from "../App/signup.js";
 
 import { Navbar } from "../Components/Navbar.js";
 import { PostForm } from "../Components/PostForm.js";
@@ -9,6 +10,7 @@ class Index {
     this.localStorageClearHandler();
 
     this.Login;
+    this.Signup;
 
     this.token;
     this.userId;
@@ -16,9 +18,10 @@ class Index {
 
     this.isAuth;
 
+    this.wrapper = document.querySelector(".wrapper");
+
     this.initPage();
 
-    this.wrapper = document.querySelector(".wrapper");
     this.mainLayout = `
     <div class="row">
       <nav-bar class="col-2"></nav-bar>
@@ -43,17 +46,27 @@ class Index {
     } else {
       this.Login = new Login();
 
-      const loginBtn = document.querySelector("#login-btn");
-      loginBtn.addEventListener("login-success", async (event) => {
+      this.wrapper.addEventListener("login-success", async (event) => {
         this.loginSuccessHandler();
         this.isAuth = await this.checkAuth(this.token);
 
         if (this.isAuth) {
           Login.clearLoginCSS();
           this.loadMainPage();
+          this.Login = null;
         }
       });
     }
+
+    this.wrapper.addEventListener(
+      "init-login",
+      this._initLoginHandler.bind(this)
+    );
+
+    this.wrapper.addEventListener(
+      "init-signup",
+      this._initSignupHandler.bind(this)
+    );
   }
 
   loadMainPage() {
@@ -96,6 +109,15 @@ class Index {
       this.logoutHandler();
     }, milliseconds);
   };
+
+  _initLoginHandler(event) {
+    this.Login = new Login();
+  }
+
+  _initSignupHandler(event) {
+    console.log("initSignupHandler");
+    this.Signup = new Signup();
+  }
 
   localStorageClearHandler() {
     window.addEventListener("beforeunload", function (e) {

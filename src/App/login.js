@@ -17,13 +17,13 @@ export class Login {
       </form>
     
       <div class="register-message-container">
-        <a href="/register">Need an account? Register here!</a>
+        <a href="#" id="signup-btn">Need an account? Register here!</a>
       </div>
     </div>
     `;
 
-    const wrapper = document.querySelector(".wrapper");
-    wrapper.innerHTML = this.loginPage;
+    this.wrapper = document.querySelector(".wrapper");
+    this.wrapper.innerHTML = this.loginPage;
 
     this.loginForm = document.querySelector(".login-form");
     this.loginButton = document.querySelector("#login-btn");
@@ -35,6 +35,9 @@ export class Login {
     fileref.setAttribute("href", "assets/styles/login.css");
     fileref.setAttribute("id", "login-css");
     document.getElementsByTagName("head")[0].appendChild(fileref);
+
+    this.initLogin();
+
     // this._states = {};
   }
 
@@ -47,6 +50,14 @@ export class Login {
   //     this._states[key] = value;
   //   }
   // }
+
+  initLogin() {
+    // other tasks,,
+
+    //signup btn handler
+    const signupLink = document.querySelector("#signup-btn");
+    signupLink.addEventListener("click", this._signupHandler.bind(this));
+  }
 
   async loginHandler(event) {
     event.preventDefault();
@@ -79,7 +90,13 @@ export class Login {
     const expiryDate = new Date(new Date().getTime() + remainingMilliseconds);
     localStorage.setItem("expiryDate", expiryDate.toISOString());
     const loginEvent = new Event("login-success", { bubbles: true });
-    event.target.dispatchEvent(loginEvent);
+    this.wrapper.dispatchEvent(loginEvent);
+  }
+
+  _signupHandler(event) {
+    event.preventDefault();
+    const signupEvent = new Event("init-signup", { bubbles: true });
+    this.wrapper.dispatchEvent(signupEvent);
   }
 
   static clearLoginCSS() {
@@ -89,6 +106,7 @@ export class Login {
 
   showErrorMessage(message) {
     const errorMessageElement = document.querySelector("#errorMessage");
+    errorMessageElement.classList.add("error");
     errorMessageElement.innerText = message;
   }
 }
