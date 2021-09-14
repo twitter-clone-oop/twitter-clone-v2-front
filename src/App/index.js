@@ -43,8 +43,19 @@ class Index {
     this.isAuth = await this.checkAuth(this.token);
     if (this.isAuth) {
       // load main post apge
+      loginSuccessHandler();
     } else {
       this.Login = new Login();
+
+      this.wrapper.addEventListener(
+        "init-login",
+        this._initLoginHandler.bind(this)
+      );
+
+      this.wrapper.addEventListener(
+        "init-signup",
+        this._initSignupHandler.bind(this)
+      );
 
       this.wrapper.addEventListener("login-success", async (event) => {
         this.loginSuccessHandler();
@@ -57,16 +68,6 @@ class Index {
         }
       });
     }
-
-    this.wrapper.addEventListener(
-      "init-login",
-      this._initLoginHandler.bind(this)
-    );
-
-    this.wrapper.addEventListener(
-      "init-signup",
-      this._initSignupHandler.bind(this)
-    );
   }
 
   loadMainPage() {
