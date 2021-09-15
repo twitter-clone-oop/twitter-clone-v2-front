@@ -23,20 +23,6 @@ class Index {
     this.wrapper = document.querySelector(".wrapper");
 
     this.initPage();
-
-    this.mainLayout = `
-    <div class="row">
-      <nav-bar class="col-2"></nav-bar>
-      <div class="mainSectionContainer col-10 col-md-8 col-lg-6">
-        <div class="titleContainer">
-          <h1 id="page-title">PageTitle</h1>
-        </div>
-        <create-post-form></create-post-form>
-      </div>
-      <div class="d-none d-md-block col-md-2 col-lg-4">
-        <span>Third column</span>
-      </div>
-    </div>`;
   }
 
   //page code -> dynamic import
@@ -62,18 +48,25 @@ class Index {
       this.wrapper.addEventListener("login-success", async (event) => {
         this.loginSuccessHandler();
         this.isAuth = await this.checkAuth(this.token);
-
-        if (this.isAuth) {
-          Login.clearLoginCSS();
-          this.loadMainPage();
-          this.Login = null;
-        }
       });
     }
   }
 
   loadMainPage() {
-    this.wrapper.innerHTML = this.mainLayout;
+    const mainLayout = `
+    <div class="row">
+      <nav-bar class="col-2"></nav-bar>
+      <div class="mainSectionContainer col-10 col-md-8 col-lg-6">
+        <div class="titleContainer">
+          <h1 id="page-title">PageTitle</h1>
+        </div>
+        <create-post-form profile-image-url="${this.userProfile.profilePic}"></create-post-form>
+      </div>
+      <div class="d-none d-md-block col-md-2 col-lg-4">
+        <span>Third column</span>
+      </div>
+    </div>`;
+    this.wrapper.innerHTML = mainLayout;
   }
 
   async checkAuth(token) {
@@ -107,7 +100,10 @@ class Index {
     this.expiryDate = localStorage.getItem("expiryDate");
 
     this.userProfile = await this.fetchUserProfile();
-    console.log(this.userProfile);
+
+    Login.clearLoginCSS();
+    this.loadMainPage();
+    this.Login = null;
   };
 
   setAutoLogout = (milliseconds) => {

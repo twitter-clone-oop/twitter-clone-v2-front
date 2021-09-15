@@ -1,9 +1,12 @@
+import env from "../../env.js";
+
 export class PostForm extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: "open" });
 
     this.postTextarea;
+    this.profileImageTag;
 
     this.shadowRoot.innerHTML = `
     <style>
@@ -76,6 +79,20 @@ export class PostForm extends HTMLElement {
     //POST Button click handler 작성
     //custom event 발생 (createPost)
     postButton.addEventListener("click", this._createPostHandler.bind(this));
+
+    this.profileImageTag = this.shadowRoot.querySelector(
+      ".userImageContainer img"
+    );
+    this.profileImageUrl = this.getAttribute("profile-image-url");
+    console.log(this.profileImageUrl);
+    this._fetchProfilePic(this.profileImageUrl);
+  }
+
+  async _fetchProfilePic(path) {
+    console.log(path);
+    this.profileImageTag.setAttribute("src", `${env.BACKEND_BASE_URL}${path}`);
+    //fetch pic
+    //set pic to div
   }
 
   _createPostHandler() {
@@ -83,6 +100,8 @@ export class PostForm extends HTMLElement {
     this.setAttribute("data", this.postTextarea.value);
     this.dispatchEvent(createPostEvent);
   }
+
+  _fetchProfileImage() {}
 }
 
 customElements.define("create-post-form", PostForm);
