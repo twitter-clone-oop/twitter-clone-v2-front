@@ -1,5 +1,7 @@
+import env from "../../env.js";
+
 export class Post extends HTMLElement {
-  constructor() {
+  constructor(postData) {
     super();
     this.attachShadow({ mode: "open" });
 
@@ -109,25 +111,25 @@ export class Post extends HTMLElement {
       .post.largeFont .postFooter {}
       </style>
 
-      <div class="post" data-id="postData._id">
+      <div class="post" data-id="${postData._id}">
         <div class="postActionContainer">
           <!-- retweet post -->
         </div>
         <div class="mainContentContainer">
           <div class="userImageContainer">
-            <img src="src/Components/user.png">
+            <img src="${env.BACKEND_BASE_URL}/${postData.postedBy.profilePic}">
           </div>
           <div class="postContentContainer">
             <!-- <div class="pinnedPostText"></div> -->
             <div class="header">
-              <a href="user_profile_page_link" class="displayName">displayName</a>
-              <span class="username">@username</span>
+              <a href="user_profile_page_link" class="displayName">${postData.postedBy.firstName} ${postData.postedBy.lastName}</a>
+              <span class="username">@${postData.postedBy.userName}</span>
               <span class="date">timestamp</span>
               ${this.buttons}
             </div>
             <!-- replyFlag -->
             <div class="postBody">
-              <span>post content</span>
+              <span>${postData.content}</span>
             </div>
             <div class="postFooter">
               <div class="postButtonContainer">
@@ -138,16 +140,15 @@ export class Post extends HTMLElement {
               <div class="postButtonContainer green">
                 <button class="retweetButton">
                   <i class="fas fa-retweet"></i>
-                  <span>0</span>  <!-- reweetUsers.length -->
+                  <span>${postData.retweetUsers.length}</span>  <!-- reweetUsers.length -->
                 </button>
               </div>
               <div class="postButtonContainer red">
                 <button class="likeButton">
                   <i class="far fa-heart"></i>
-                  <span>0</span> <!-- likes.length -->
+                  <span>${postData.likes.length}</span> <!-- likes.length -->
                 </button>
               </div>
-
             </div>
           </div>
         </div>
