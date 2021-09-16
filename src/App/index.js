@@ -23,6 +23,7 @@ class Index {
     this.isAuth;
 
     this.wrapper = document.querySelector(".wrapper");
+    this.postsArea;
 
     this.initPage();
   }
@@ -38,12 +39,11 @@ class Index {
       this.loginSuccessHandler();
       const posts = await this._getPosts();
 
-      const postsArea = document.querySelector(".posts-area");
+      this.postsArea = document.querySelector(".posts-area");
 
       posts.forEach((post) => {
-        console.log(post);
         const postCard = new Post(post);
-        postsArea.prepend(postCard);
+        this.postsArea.appendChild(postCard);
       });
     } else {
       this.Login = new Login();
@@ -138,6 +138,13 @@ class Index {
 
     Login.clearLoginCSS();
     this.loadMainPage();
+
+    const createPostForm = document.querySelector("create-post-form");
+    createPostForm.addEventListener("create-post", (event) => {
+      const newPost = event.post.createdPost;
+      const postCard = new Post(newPost);
+      this.postsArea.prepend(postCard);
+    });
   };
 
   setAutoLogout = (milliseconds) => {
@@ -151,7 +158,6 @@ class Index {
   }
 
   _initSignupHandler(event) {
-    console.log("initSignupHandler");
     this.Signup = new Signup();
   }
 
