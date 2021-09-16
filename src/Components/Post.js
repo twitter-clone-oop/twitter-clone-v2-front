@@ -1,4 +1,5 @@
 import env from "../../env.js";
+import { timeDifference } from "../Utility/time.js";
 
 export class Post extends HTMLElement {
   constructor(postData) {
@@ -122,9 +123,14 @@ export class Post extends HTMLElement {
           <div class="postContentContainer">
             <!-- <div class="pinnedPostText"></div> -->
             <div class="header">
-              <a href="user_profile_page_link" class="displayName">${postData.postedBy.firstName} ${postData.postedBy.lastName}</a>
+              <a href="user_profile_page_link" class="displayName">${
+                postData.postedBy.firstName
+              } ${postData.postedBy.lastName}</a>
               <span class="username">@${postData.postedBy.userName}</span>
-              <span class="date">timestamp</span>
+              <span class="date">${timeDifference(
+                new Date(),
+                new Date(postData.createdAt)
+              )}</span>
               ${this.buttons}
             </div>
             <!-- replyFlag -->
@@ -140,7 +146,9 @@ export class Post extends HTMLElement {
               <div class="postButtonContainer green">
                 <button class="retweetButton">
                   <i class="fas fa-retweet"></i>
-                  <span>${postData.retweetUsers.length}</span>  <!-- reweetUsers.length -->
+                  <span>${
+                    postData.retweetUsers.length
+                  }</span>  <!-- reweetUsers.length -->
                 </button>
               </div>
               <div class="postButtonContainer red">
