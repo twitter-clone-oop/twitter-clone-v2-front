@@ -36,7 +36,15 @@ class Index {
     if (this.isAuth) {
       // load main post apge
       this.loginSuccessHandler();
-      const posts = this._getPosts();
+      const posts = await this._getPosts();
+
+      const postsArea = document.querySelector(".posts-area");
+
+      posts.forEach((post) => {
+        console.log(post);
+        const postCard = new Post(post);
+        postsArea.prepend(postCard);
+      });
     } else {
       this.Login = new Login();
 
@@ -79,7 +87,8 @@ class Index {
           <h1 id="page-title">PageTitle</h1>
         </div>
         <create-post-form profile-image-url="${this.userProfile.profilePic}"></create-post-form>
-        <post-card></post-card>
+        <div class="posts-area">
+        </div>
       </div>
       <div class="d-none d-md-block col-md-2 col-lg-4">
         <span>Third column</span>
