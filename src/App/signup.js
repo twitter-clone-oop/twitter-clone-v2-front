@@ -38,7 +38,6 @@ export class Signup {
 
   async _submitHandler(event) {
     event.preventDefault();
-    console.log("btn");
     const firstName = this.signupForm.querySelector("#firstName").value;
     const lastName = this.signupForm.querySelector("#lastName").value;
     const userName = this.signupForm.querySelector("#userName").value;
@@ -67,11 +66,8 @@ export class Signup {
         password,
       }),
     });
-    console.log(response.status);
     let statusCode = response.status;
     response = await response.json();
-
-    console.log("response", response);
 
     if (statusCode >= 200 && statusCode < 400) {
       const initLoginEvent = new Event("init-login");
@@ -80,9 +76,6 @@ export class Signup {
     } else {
       //error
       let errorMessage = `${response.message.param} - ${response.message.msg}`;
-
-      console.log(errorMessage);
-
       this._showErrorMessage(errorMessage);
     }
   }

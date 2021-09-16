@@ -79,13 +79,6 @@ export class PostForm extends HTMLElement {
       this.postButton.removeAttribute("disabled");
     });
 
-    //POST Button click handler 작성
-    //custom event 발생 (createPost)
-    this.postButton.addEventListener(
-      "click",
-      this._createPostHandler.bind(this)
-    );
-
     this.profileImageTag = this.shadowRoot.querySelector(
       ".userImageContainer img"
     );
@@ -114,7 +107,7 @@ export class PostForm extends HTMLElement {
     this.postTextarea.value = "";
 
     response = await response.json();
-    console.log(response);
+    this._dispatchCreatePostEvent(response);
 
     //update posts list of the Main layout
   }
@@ -126,8 +119,9 @@ export class PostForm extends HTMLElement {
     //set pic to div
   }
 
-  _createPostHandler() {
+  _dispatchCreatePostEvent(post) {
     const createPostEvent = new Event("create-post");
+    createPostEvent.post = post;
     this.setAttribute("data", this.postTextarea.value);
     this.dispatchEvent(createPostEvent);
   }
