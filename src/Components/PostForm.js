@@ -5,6 +5,9 @@ export class PostForm extends HTMLElement {
     super();
     this.attachShadow({ mode: "open" });
 
+    this.token = sessionStorage.getItem("token");
+    this.userId = sessionStorage.getItem("userId");
+
     this.postTextarea;
     this.profileImageTag;
 
@@ -66,26 +69,54 @@ export class PostForm extends HTMLElement {
 
   connectedCallback() {
     this.postTextarea = this.shadowRoot.querySelector("#postTextarea");
-    const postButton = this.shadowRoot.querySelector("#submitPostButton");
+    this.postButton = this.shadowRoot.querySelector("#submitPostButton");
 
     this.postTextarea.addEventListener("keyup", (event) => {
       const value = this.postTextarea.value.trim();
       if (value === "") {
-        return postButton.setAttribute("disabled", "");
+        return this.postButton.setAttribute("disabled", "");
       }
-      postButton.removeAttribute("disabled");
+      this.postButton.removeAttribute("disabled");
     });
 
     //POST Button click handler 작성
     //custom event 발생 (createPost)
-    postButton.addEventListener("click", this._createPostHandler.bind(this));
+    this.postButton.addEventListener(
+      "click",
+      this._createPostHandler.bind(this)
+    );
 
     this.profileImageTag = this.shadowRoot.querySelector(
       ".userImageContainer img"
     );
     this.profileImageUrl = this.getAttribute("profile-image-url");
-    console.log(this.profileImageUrl);
     this._fetchProfilePic(this.profileImageUrl);
+
+    this.postButton.addEventListener("click", this._postPostHandler.bind(this));
+  }
+
+  async _postPostHandler() {
+    const content = this.postTextarea.value;
+
+    const post = {
+      content,
+    };
+
+    let response = await fetch(`${env.BACKEND_BASE_URL}/post`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${this.token}`,
+      },
+      body: JSON.stringify(post),
+    });
+
+    this.postTextarea.value = "";
+
+    response = await response.json();
+    console.log(response);
+
+    //update posts list of the Main layout
   }
 
   async _fetchProfilePic(path) {

@@ -3,11 +3,13 @@ import { Signup } from "../App/signup.js";
 
 import { Navbar } from "../Components/Navbar.js";
 import { PostForm } from "../Components/PostForm.js";
+import { Post } from "../Components/Post.js";
+
 import env from "../../env.js";
 
 class Index {
   constructor() {
-    this.localStorageClearHandler();
+    // this.sessionStorageClearHandler();
 
     this.Login;
     this.Signup;
@@ -28,10 +30,14 @@ class Index {
   //page code -> dynamic import
 
   async initPage() {
-    this.isAuth = await this.checkAuth(this.token);
+    const states = this.getStates();
+    console.log(states);
+
+    this.isAuth = await this.checkAuth(states.token);
+    console.log(this.isAuth);
     if (this.isAuth) {
       // load main post apge
-      loginSuccessHandler();
+      this.loginSuccessHandler();
     } else {
       this.Login = new Login();
 
@@ -61,12 +67,20 @@ class Index {
           <h1 id="page-title">PageTitle</h1>
         </div>
         <create-post-form profile-image-url="${this.userProfile.profilePic}"></create-post-form>
+        <post-card></post-card>
       </div>
       <div class="d-none d-md-block col-md-2 col-lg-4">
         <span>Third column</span>
       </div>
     </div>`;
     this.wrapper.innerHTML = mainLayout;
+  }
+
+  getStates() {
+    return {
+      token: sessionStorage.getItem("token"),
+      userId: sessionStorage.getItem("userId"),
+    };
   }
 
   async checkAuth(token) {
@@ -89,21 +103,20 @@ class Index {
     this.isAuth = false;
     this.token = null;
 
-    localStorage.removeItem("token");
-    localStorage.removeItem("userId");
-    localStorage.removeItem("expiryDate");
+    sessionStorage.removeItem("token");
+    sessionStorage.removeItem("userId");
+    sessionStorage.removeItem("expiryDate");
   };
 
   loginSuccessHandler = async () => {
-    this.token = localStorage.getItem("token");
-    this.userId = localStorage.getItem("userId");
-    this.expiryDate = localStorage.getItem("expiryDate");
+    this.token = sessionStorage.getItem("token");
+    this.userId = sessionStorage.getItem("userId");
+    this.expiryDate = sessionStorage.getItem("expiryDate");
 
     this.userProfile = await this.fetchUserProfile();
 
     Login.clearLoginCSS();
     this.loadMainPage();
-    this.Login = null;
   };
 
   setAutoLogout = (milliseconds) => {
@@ -121,12 +134,12 @@ class Index {
     this.Signup = new Signup();
   }
 
-  localStorageClearHandler() {
+  sessionStorageClearHandler() {
     window.addEventListener("beforeunload", function (e) {
       // Cancel the event
       e.preventDefault(); // If you prevent default behavior in Mozilla Firefox prompt will always be shown
       // Chrome requires returnValue to be set
-      localStorage.clear();
+      sessionStorage.clear();
       e.returnValue = "";
     });
   }

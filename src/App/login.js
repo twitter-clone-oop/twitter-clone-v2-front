@@ -11,8 +11,8 @@ export class Login {
       <form action="POST" class="login-form">
         <p id="errorMessage"></p>
     
-        <input type="text" id="loginUsername" name="loginUsername" placeholder="E-Mail" required>
-        <input type="password" id="loginPassword" name="loginPassword" placeholder="Password" required>
+        <input type="text" id="loginUsername" name="loginUsername" placeholder="E-Mail" value="test@test.com" required>
+        <input type="password" id="loginPassword" name="loginPassword" placeholder="Password" value="tester" required>
         <input type="submit" id="login-btn" value="Login">
       </form>
     
@@ -83,12 +83,12 @@ export class Login {
 
     response = await response.json();
 
-    localStorage.setItem("token", response.token);
-    localStorage.setItem("userId", response.userId);
+    sessionStorage.setItem("token", response.token);
+    sessionStorage.setItem("userId", response.userId);
 
     const remainingMilliseconds = 60 * 60 * 1000;
     const expiryDate = new Date(new Date().getTime() + remainingMilliseconds);
-    localStorage.setItem("expiryDate", expiryDate.toISOString());
+    sessionStorage.setItem("expiryDate", expiryDate.toISOString());
     const loginEvent = new Event("login-success", { bubbles: true });
     this.wrapper.dispatchEvent(loginEvent);
   }
@@ -101,7 +101,9 @@ export class Login {
 
   static clearLoginCSS() {
     const fileref = document.querySelector("#login-css");
-    fileref.remove();
+    if (fileref) {
+      fileref.remove();
+    }
   }
 
   showErrorMessage(message) {
