@@ -7,6 +7,32 @@ export class Post extends HTMLElement {
     this.attachShadow({ mode: "open" });
 
     this.buttons = "";
+    this.pinnedPostText = "";
+
+    this.states = this.getStates();
+
+    if (postData.postedBy._id.toString() === this.states.userId.toString()) {
+      let pinnedClass = "";
+      let dataTarget = "#confirmPinModal";
+
+      if (postData.pinned === true) {
+        pinnedClass = "active";
+        dataTarget = "#unpinModal";
+        this.pinnedPostText = `
+          <i class="fas fa-thumbtack"></i> <span>Pinned post</span>;
+        `;
+      } else {
+        pinnedClass = "";
+        this.pinnedPostText = "";
+        dataTarget = "#confirmPinModal";
+      }
+
+      this.buttons = `
+        <button class="pinButton ${pinnedClass}" data-id="${postData._id}" data-toggle="modal" data-target="${dataTarget}">
+          <i class="fas fa-thumbtack"></i>
+        </button>
+      `;
+    }
 
     this.shadowRoot.innerHTML = `
       <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous" />
@@ -167,6 +193,13 @@ export class Post extends HTMLElement {
   connectedCallbed() {}
 
   static createPostHTML(post) {}
+
+  getStates() {
+    return {
+      token: sessionStorage.getItem("token"),
+      userId: sessionStorage.getItem("userId"),
+    };
+  }
 }
 
 customElements.define("post-card", Post);
