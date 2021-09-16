@@ -156,6 +156,8 @@ export class Post extends HTMLElement {
   }
 
   connectedCallbed() {}
+
+  static createPostHTML(post) {}
 }
 
 customElements.define("post-card", Post);

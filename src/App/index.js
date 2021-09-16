@@ -31,13 +31,12 @@ class Index {
 
   async initPage() {
     const states = this.getStates();
-    console.log(states);
-
     this.isAuth = await this.checkAuth(states.token);
-    console.log(this.isAuth);
+
     if (this.isAuth) {
       // load main post apge
       this.loginSuccessHandler();
+      const posts = this._getPosts();
     } else {
       this.Login = new Login();
 
@@ -56,6 +55,19 @@ class Index {
         this.isAuth = await this.checkAuth(this.token);
       });
     }
+  }
+
+  async _getPosts() {
+    let posts = await fetch(
+      `${env.BACKEND_BASE_URL}/post/posts?followingOnly=true`,
+      {
+        headers: {
+          Authorization: `Bearer ${this.token}`,
+        },
+      }
+    );
+    posts = await posts.json();
+    return posts;
   }
 
   loadMainPage() {
