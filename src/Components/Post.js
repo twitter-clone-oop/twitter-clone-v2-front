@@ -9,26 +9,25 @@ export class Post extends HTMLElement {
     this.buttons = "";
     this.pinnedPostText = "";
 
+    this.pinButton;
+
     this.states = this.getStates();
 
     if (postData.postedBy._id.toString() === this.states.userId.toString()) {
       let pinnedClass = "";
-      let dataTarget = "#confirmPinModal";
 
       if (postData.pinned === true) {
         pinnedClass = "active";
-        dataTarget = "#unpinModal";
         this.pinnedPostText = `
           <i class="fas fa-thumbtack"></i> <span>Pinned post</span>;
         `;
       } else {
         pinnedClass = "";
         this.pinnedPostText = "";
-        dataTarget = "#confirmPinModal";
       }
 
       this.buttons = `
-        <button class="pinButton ${pinnedClass}" data-id="${postData._id}" data-toggle="modal" data-target="${dataTarget}">
+        <button class="pinButton ${pinnedClass}" data-id="${postData._id}">
           <i class="fas fa-thumbtack"></i>
         </button>
       `;
@@ -132,6 +131,16 @@ export class Post extends HTMLElement {
         background-color: var(--greenBackground);
       }
 
+      .pinButton.active {
+        color: var(--blue);
+      }
+
+      .pinPostText {
+        font-size: 12px;
+        color: var(--grayText);
+      } 
+    
+
       .postActionContainer {}
 
       .post.largeFont .postBody,
@@ -147,7 +156,7 @@ export class Post extends HTMLElement {
             <img src="${env.BACKEND_BASE_URL}/${postData.postedBy.profilePic}">
           </div>
           <div class="postContentContainer">
-            <!-- <div class="pinnedPostText"></div> -->
+            <div class="pinnedPostText">${this.pinnedPostText}</div>
             <div class="header">
               <a href="user_profile_page_link" class="displayName">${
                 postData.postedBy.firstName
@@ -190,7 +199,15 @@ export class Post extends HTMLElement {
     `;
   }
 
-  connectedCallbed() {}
+  connectedCallback() {
+    this.pinButton = this.shadowRoot.querySelector(".pinButton");
+    this.pinButton.addEventListener("click", this.pinPostHandler.bind(this));
+  }
+
+  pinPostHandler(event) {
+    const pinPostEvent = new Event("pin-post", { bubbles: true });
+    this.dispatchEvent(pinPostEvent);
+  }
 
   static createPostHTML(post) {}
 
