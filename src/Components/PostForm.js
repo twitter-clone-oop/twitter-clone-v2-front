@@ -113,7 +113,6 @@ export class PostForm extends HTMLElement {
   }
 
   async _fetchProfilePic(path) {
-    console.log(path);
     this.profileImageTag.setAttribute("src", `${env.BACKEND_BASE_URL}${path}`);
     //fetch pic
     //set pic to div
