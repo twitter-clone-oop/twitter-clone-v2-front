@@ -4,6 +4,7 @@ import { Signup } from "../App/signup.js";
 import { Navbar } from "../Components/Navbar.js";
 import { PostForm } from "../Components/PostForm.js";
 import { Post } from "../Components/Post.js";
+import { PostModal } from "../Components/PostModal.js";
 
 import env from "../../env.js";
 
@@ -41,6 +42,12 @@ class Index {
 
       this.postsArea = document.querySelector(".posts-area");
 
+      //pinPostHandler
+      this.postsArea.addEventListener(
+        "pin-post",
+        this.pinPostHandler.bind(this)
+      );
+
       posts.forEach((post) => {
         const postCard = new Post(post);
         this.postsArea.appendChild(postCard);
@@ -63,6 +70,17 @@ class Index {
         this.isAuth = await this.checkAuth(this.token);
       });
     }
+  }
+
+  pinPostHandler(event) {
+    // show modal
+    const postId = event.target.shadowRoot.querySelector(".post").dataset.id;
+
+    const postModal = new PostModal();
+    console.log(postModal);
+    // event : confirm, cancel
+    //confirm -> pin the post
+    //cancel -> do nothing
   }
 
   async _getPosts() {
@@ -93,7 +111,8 @@ class Index {
       <div class="d-none d-md-block col-md-2 col-lg-4">
         <span>Third column</span>
       </div>
-    </div>`;
+    </div>
+    `;
     this.wrapper.innerHTML = mainLayout;
   }
 
@@ -144,6 +163,10 @@ class Index {
       const newPost = event.post.createdPost;
       const postCard = new Post(newPost);
       this.postsArea.prepend(postCard);
+    });
+
+    document.body.addEventListener("confirm-modal", (event) => {
+      console.log("confirm-modal event");
     });
   };
 
