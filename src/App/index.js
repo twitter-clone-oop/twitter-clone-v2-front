@@ -38,20 +38,9 @@ class Index {
     if (this.isAuth) {
       // load main post apge
       this.loginSuccessHandler();
-      const posts = await this._getPosts();
 
-      this.postsArea = document.querySelector(".posts-area");
-
-      //pinPostHandler
-      this.postsArea.addEventListener(
-        "pin-post",
-        this.pinPostHandler.bind(this)
-      );
-
-      posts.forEach((post) => {
-        const postCard = new Post(post);
-        this.postsArea.appendChild(postCard);
-      });
+      // render posts
+      this.renderPosts();
     } else {
       this.Login = new Login();
 
@@ -73,14 +62,42 @@ class Index {
   }
 
   pinPostHandler(event) {
-    // show modal
+    // console.log(event.target.shadowRoot.querySelector(".post").dataset.id);
     const postId = event.target.shadowRoot.querySelector(".post").dataset.id;
 
-    const postModal = new PostModal();
-    console.log(postModal);
+    document.body.addEventListener(
+      "confirm-modal",
+      this.pinPostConfirmHandler.bind(this, postId)
+    );
+
+    const postModal = new PostModal("pin");
     // event : confirm, cancel
     //confirm -> pin the post
     //cancel -> do nothing
+  }
+
+  async pinPostConfirmHandler(postId, event) {
+    console.log("pinpostconfirmhandler");
+    if (event.action === "pin") {
+      //pin the post
+      try {
+        await fetch(`${env.BACKEND_BASE_URL}/post/${postId}`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${this.token}`,
+          },
+          body: JSON.stringify({ pinned: true }),
+        });
+
+        this.renderPosts();
+      } catch (error) {
+        if (!error.statusCode) {
+          error.statusCode = 500;
+        }
+        next(error);
+      }
+    }
   }
 
   async _getPosts() {
@@ -94,6 +111,20 @@ class Index {
     );
     posts = await posts.json();
     return posts;
+  }
+
+  async renderPosts() {
+    const posts = await this._getPosts();
+
+    this.postsArea = document.querySelector(".posts-area");
+
+    //pinPostHandler
+    this.postsArea.addEventListener("pin-post", this.pinPostHandler.bind(this));
+
+    posts.forEach((post) => {
+      const postCard = new Post(post);
+      this.postsArea.appendChild(postCard);
+    });
   }
 
   loadMainPage() {
@@ -163,10 +194,6 @@ class Index {
       const newPost = event.post.createdPost;
       const postCard = new Post(newPost);
       this.postsArea.prepend(postCard);
-    });
-
-    document.body.addEventListener("confirm-modal", (event) => {
-      console.log("confirm-modal event");
     });
   };
 
