@@ -1,8 +1,10 @@
 import env from "../../env.js";
 
 export class PostModal extends HTMLElement {
-  constructor() {
+  constructor(action) {
     super();
+    this.action = action;
+
     this.attachShadow({ mode: "open" });
 
     this.shadowRoot.innerHTML = `
@@ -82,6 +84,7 @@ export class PostModal extends HTMLElement {
   confirmButtonHandler(event) {
     this.hideModal();
     const modalConfirmEvent = new Event("confirm-modal");
+    modalConfirmEvent.action = this.action;
     document.body.dispatchEvent(modalConfirmEvent);
   }
 
