@@ -6,30 +6,29 @@ export class Post extends HTMLElement {
     super();
     this.attachShadow({ mode: "open" });
 
+    this.postData = postData;
+
     this.buttons = "";
+    this.pinnedClass = "";
     this.pinnedPostText = "";
 
     this.pinButton;
 
     this.states = this.getStates();
 
-    console.log(postData);
-
     if (postData.postedBy._id.toString() === this.states.userId.toString()) {
-      let pinnedClass = "";
-
       if (postData.pinned === true) {
-        pinnedClass = "active";
+        this.pinnedClass = "active";
         this.pinnedPostText = `
           <i class="fas fa-thumbtack"></i> <span>Pinned post</span>
         `;
       } else {
-        pinnedClass = "";
+        this.pinnedClass = "";
         this.pinnedPostText = "";
       }
 
       this.buttons = `
-        <button class="pinButton ${pinnedClass}" data-id="${postData._id}">
+        <button class="pinButton ${this.pinnedClass}" data-id="${postData._id}">
           <i class="fas fa-thumbtack"></i>
         </button>
       `;
