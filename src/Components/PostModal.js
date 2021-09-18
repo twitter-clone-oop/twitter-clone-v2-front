@@ -82,10 +82,9 @@ export class PostModal extends HTMLElement {
   }
 
   confirmButtonHandler(event) {
-    this.hideModal();
     const modalConfirmEvent = new Event("confirm-modal");
     modalConfirmEvent.action = this.action;
-    document.body.dispatchEvent(modalConfirmEvent);
+    this.dispatchEvent(modalConfirmEvent);
   }
 
   showModal() {

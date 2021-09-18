@@ -38,9 +38,7 @@ class Index {
     if (this.isAuth) {
       // load main post apge
       this.loginSuccessHandler();
-
       // render posts
-      this.renderPosts();
     } else {
       this.Login = new Login();
 
@@ -65,15 +63,14 @@ class Index {
     // console.log(event.target.shadowRoot.querySelector(".post").dataset.id);
     const postId = event.target.shadowRoot.querySelector(".post").dataset.id;
 
-    document.body.addEventListener(
-      "confirm-modal",
-      this.pinPostConfirmHandler.bind(this, postId)
-    );
-
     const postModal = new PostModal("pin");
-    // event : confirm, cancel
-    //confirm -> pin the post
-    //cancel -> do nothing
+
+    document
+      .querySelector("post-modal")
+      .addEventListener(
+        "confirm-modal",
+        this.pinPostConfirmHandler.bind(this, postId)
+      );
   }
 
   async pinPostConfirmHandler(postId, event) {
@@ -90,12 +87,10 @@ class Index {
           body: JSON.stringify({ pinned: true }),
         });
 
+        event.target.remove();
         this.renderPosts();
       } catch (error) {
-        if (!error.statusCode) {
-          error.statusCode = 500;
-        }
-        next(error);
+        console.log(error);
       }
     }
   }
@@ -114,17 +109,27 @@ class Index {
   }
 
   async renderPosts() {
+    const mainSectionContainer = document.querySelector(
+      ".mainSectionContainer"
+    );
+
+    const oldPostsArea = document.querySelector(".posts-area");
+    oldPostsArea.innerHTML = "";
+    const newPostsArea = oldPostsArea.cloneNode(true); //clear all event listeners
+
+    mainSectionContainer.removeChild(oldPostsArea);
+    newPostsArea.innerHTML = "";
+    newPostsArea.addEventListener("pin-post", this.pinPostHandler.bind(this));
+
     const posts = await this._getPosts();
-
-    this.postsArea = document.querySelector(".posts-area");
-
-    //pinPostHandler
-    this.postsArea.addEventListener("pin-post", this.pinPostHandler.bind(this));
+    console.log(posts);
 
     posts.forEach((post) => {
       const postCard = new Post(post);
-      this.postsArea.appendChild(postCard);
+      newPostsArea.appendChild(postCard);
     });
+
+    mainSectionContainer.appendChild(newPostsArea);
   }
 
   loadMainPage() {
@@ -188,6 +193,8 @@ class Index {
 
     Login.clearLoginCSS();
     this.loadMainPage();
+
+    this.renderPosts();
 
     const createPostForm = document.querySelector("create-post-form");
     createPostForm.addEventListener("create-post", (event) => {
