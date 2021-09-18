@@ -13,6 +13,32 @@ export class PostModal extends HTMLElement {
 
       <style>
 
+
+        .modal {
+          animation: fadein 1s;
+          -webkit-animation: fadein 1s;
+          -webkit-transition: all 1s ease-in-out;
+          transition: all 1s ease-in-out;
+        }
+
+        @keyframes fadein {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+
+        @-webkit-keyframse fadein {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+
         .backdrop {
           position: fixed;
           top: 0;
