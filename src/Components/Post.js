@@ -13,13 +13,15 @@ export class Post extends HTMLElement {
 
     this.states = this.getStates();
 
+    console.log(postData);
+
     if (postData.postedBy._id.toString() === this.states.userId.toString()) {
       let pinnedClass = "";
 
       if (postData.pinned === true) {
         pinnedClass = "active";
         this.pinnedPostText = `
-          <i class="fas fa-thumbtack"></i> <span>Pinned post</span>;
+          <i class="fas fa-thumbtack"></i> <span>Pinned post</span>
         `;
       } else {
         pinnedClass = "";
