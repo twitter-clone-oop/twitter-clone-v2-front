@@ -34,6 +34,12 @@ export class Post extends HTMLElement {
       `;
     }
 
+    this.likeButtonActiveClass = postData.likes.includes(this.states.userId)
+      ? "active"
+      : "";
+    this.likeCount = postData.likes.length === 0 ? "" : postData.likes.length;
+    this.likeButton;
+
     this.shadowRoot.innerHTML = `
       <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous" />
       <link rel="stylesheet" href="assets/styles/fontawesome/css/all.css" />
@@ -48,6 +54,11 @@ export class Post extends HTMLElement {
       button i,
       button span {
         pointer-events: none;
+      }
+
+      button:focus {
+        outline:none;
+        box-shadow: none;
       }
 
 
@@ -140,12 +151,18 @@ export class Post extends HTMLElement {
         font-size: 12px;
         color: var(--grayText);
       } 
+
+      .postButtonContainer.red button.active {
+        color: var(--red);
+      }
+      
     
 
       .postActionContainer {}
 
       .post.largeFont .postBody,
       .post.largeFont .postFooter {}
+
       </style>
 
       <div class="post" data-id="${postData._id}">
@@ -188,9 +205,9 @@ export class Post extends HTMLElement {
                 </button>
               </div>
               <div class="postButtonContainer red">
-                <button class="likeButton">
+                <button class="likeButton ${this.likeButtonActiveClass}">
                   <i class="far fa-heart"></i>
-                  <span>${postData.likes.length}</span> <!-- likes.length -->
+                  <span>${this.likeCount}</span> <!-- likes.length -->
                 </button>
               </div>
             </div>
@@ -203,6 +220,9 @@ export class Post extends HTMLElement {
   connectedCallback() {
     this.pinButton = this.shadowRoot.querySelector(".pinButton");
     this.pinButton.addEventListener("click", this.pinPostHandler.bind(this));
+
+    this.likeButton = this.shadowRoot.querySelector(".likeButton");
+    this.likeButton.addEventListener("click", this.likeHandler.bind(this));
   }
 
   pinPostHandler(event) {
@@ -210,7 +230,30 @@ export class Post extends HTMLElement {
     this.dispatchEvent(pinPostEvent);
   }
 
-  static createPostHTML(post) {}
+  async likeHandler(event) {
+    let post = await fetch(
+      `${env.BACKEND_BASE_URL}/post/${this.postData._id}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${this.states.token}`,
+        },
+        body: JSON.stringify({ likes: true }),
+      }
+    );
+
+    post = await post.json();
+
+    const likeCountSpan = this.shadowRoot.querySelector(".likeButton span");
+    likeCountSpan.textContent = post.likes.length || "";
+
+    if (post.likes.includes(this.states.userId)) {
+      this.likeButton.classList.add("active");
+    } else {
+      this.likeButton.classList.remove("active");
+    }
+  }
 
   getStates() {
     return {

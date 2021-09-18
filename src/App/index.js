@@ -137,12 +137,6 @@ class Index {
     });
 
     mainSectionContainer.appendChild(newPostsArea);
-
-    ///
-    console.log(this.postCards[0]);
-    this.postCards[0].pinnedPostText = "kkk";
-    console.log(this.postCards[0].postData._id);
-    ///
   }
 
   updatePostsArea() {
@@ -244,7 +238,8 @@ class Index {
     createPostForm.addEventListener("create-post", (event) => {
       const newPost = event.post.createdPost;
       const postCard = new Post(newPost);
-      this.postsArea.prepend(postCard);
+      const postsArea = document.querySelector(".posts-area");
+      postsArea.prepend(postCard);
     });
   };
 
