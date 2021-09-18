@@ -26,6 +26,9 @@ class Index {
     this.wrapper = document.querySelector(".wrapper");
     this.postsArea;
 
+    this.postCards = [];
+    this.patchPostResponse;
+
     this.initPage();
   }
 
@@ -74,21 +77,24 @@ class Index {
   }
 
   async pinPostConfirmHandler(postId, event) {
-    console.log("pinpostconfirmhandler");
     if (event.action === "pin") {
       //pin the post
       try {
-        await fetch(`${env.BACKEND_BASE_URL}/post/${postId}`, {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${this.token}`,
-          },
-          body: JSON.stringify({ pinned: true }),
-        });
+        let patchPostResponse = await fetch(
+          `${env.BACKEND_BASE_URL}/post/${postId}`,
+          {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${this.token}`,
+            },
+            body: JSON.stringify({ pinned: true }),
+          }
+        );
+        this.patchPostResponse = await patchPostResponse.json();
 
         event.target.remove();
-        this.renderPosts();
+        this.updatePostsArea();
       } catch (error) {
         console.log(error);
       }
@@ -122,14 +128,52 @@ class Index {
     newPostsArea.addEventListener("pin-post", this.pinPostHandler.bind(this));
 
     const posts = await this._getPosts();
-    console.log(posts);
 
     posts.forEach((post) => {
       const postCard = new Post(post);
       newPostsArea.appendChild(postCard);
+      this.postCards.push(postCard);
+      this.postCards.push(typeof postCard);
     });
 
     mainSectionContainer.appendChild(newPostsArea);
+
+    ///
+    console.log(this.postCards[0]);
+    this.postCards[0].pinnedPostText = "kkk";
+    console.log(this.postCards[0].postData._id);
+    ///
+  }
+
+  updatePostsArea() {
+    // select prevPinnedPost
+    const postCards = document.querySelectorAll("post-card");
+
+    let prevPinnedPostNode;
+    let currentPinnedPostNode;
+    postCards.forEach((post) => {
+      if (
+        post.postData._id.toString() ===
+        this.patchPostResponse.prevPinnedPost._id
+      ) {
+        prevPinnedPostNode = post;
+      } else if (
+        post.postData._id.toString() ===
+        this.patchPostResponse.currentPinnedPost._id
+      ) {
+        currentPinnedPostNode = post;
+      }
+    });
+
+    const updatedPrevPinnedPostNode = new Post(
+      this.patchPostResponse.prevPinnedPost
+    );
+    const updatedCurrentPinnedPostNode = new Post(
+      this.patchPostResponse.currentPinnedPost
+    );
+
+    prevPinnedPostNode.replaceWith(updatedPrevPinnedPostNode);
+    currentPinnedPostNode.replaceWith(updatedCurrentPinnedPostNode);
   }
 
   loadMainPage() {
