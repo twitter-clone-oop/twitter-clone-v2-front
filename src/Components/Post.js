@@ -50,10 +50,6 @@ export class Post extends HTMLElement {
     this.retweetedBy = this.isRetweet ? postData.postedBy.userName : "";
     postData = this.isRetweet ? postData.retweetData : postData;
 
-    if (this.isRetweet) {
-      console.log(postData);
-    }
-
     this.retweetButtonActiveClass =
       postData.retweetUsers &&
       postData.retweetUsers.includes(this.states.userId)
@@ -324,13 +320,17 @@ export class Post extends HTMLElement {
 
     if (post.retweetUsers.includes(this.states.userId)) {
       this.retweetButton.classList.add("active");
+
+      const retweetEvent = new Event("retweet", { bubbles: true });
+      retweetEvent.repost = repost;
+      this.dispatchEvent(retweetEvent);
     } else {
       this.retweetButton.classList.remove("active");
-    }
 
-    const retweetEvent = new Event("retweet", { bubbles: true });
-    retweetEvent.repost = repost;
-    this.dispatchEvent(retweetEvent);
+      const retweetEvent = new Event("un-retweet", { bubbles: true });
+      retweetEvent.repost = repost;
+      this.dispatchEvent(retweetEvent);
+    }
   }
 
   getStates() {
