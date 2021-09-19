@@ -16,6 +16,8 @@ export class Post extends HTMLElement {
 
     this.states = this.getStates();
 
+    //pin
+
     if (postData.postedBy._id.toString() === this.states.userId.toString()) {
       if (postData.pinned === true) {
         this.pinnedClass = "active";
@@ -34,11 +36,47 @@ export class Post extends HTMLElement {
       `;
     }
 
+    // like
+
     this.likeButtonActiveClass = postData.likes.includes(this.states.userId)
       ? "active"
       : "";
     this.likeCount = postData.likes.length === 0 ? "" : postData.likes.length;
     this.likeButton;
+
+    // retweet
+
+    this.isRetweet = postData.retweetData !== undefined;
+    this.retweetedBy = this.isRetweet ? postData.postedBy.userName : "";
+    postData = this.isRetweet ? postData.retweetData : postData;
+
+    if (this.isRetweet) {
+      console.log(postData);
+      console.log(postData.retweetUsers.includes(this.states.userId));
+    }
+
+    this.retweetButtonActiveClass =
+      postData.retweetUsers &&
+      postData.retweetUsers.includes(this.states.userId)
+        ? "active"
+        : "";
+
+    let retweetText = "";
+    if (this.isRetweet) {
+      retweetText = `
+        <span>
+          <i class="fas fa-retweet"></i>
+          Retweeted by <a href="${env.BACKEND_BASE_URL}/profile/${this.retweetedBy}">@${this.retweetedBy}</a>
+        </span>
+      `;
+    }
+
+    this.retweetCount =
+      postData.retweetUsers && postData.retweetUsers.length !== 0
+        ? postData.retweetUsers.length
+        : "";
+
+    this.retweetButton;
 
     this.shadowRoot.innerHTML = `
       <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous" />
@@ -155,8 +193,10 @@ export class Post extends HTMLElement {
       .postButtonContainer.red button.active {
         color: var(--red);
       }
-      
-    
+
+      .postButtonContainer.green button.active {
+        color: var(--green);
+      }
 
       .postActionContainer {}
 
@@ -167,7 +207,7 @@ export class Post extends HTMLElement {
 
       <div class="post" data-id="${postData._id}">
         <div class="postActionContainer">
-          <!-- retweet post -->
+          ${retweetText}
         </div>
         <div class="mainContentContainer">
           <div class="userImageContainer">
@@ -197,11 +237,9 @@ export class Post extends HTMLElement {
                 </button>
               </div>
               <div class="postButtonContainer green">
-                <button class="retweetButton">
+                <button class="retweetButton ${this.retweetButtonActiveClass}">
                   <i class="fas fa-retweet"></i>
-                  <span>${
-                    postData.retweetUsers.length
-                  }</span>  <!-- reweetUsers.length -->
+                  <span>${this.retweetCount}</span>  <!-- reweetUsers.length -->
                 </button>
               </div>
               <div class="postButtonContainer red">
@@ -223,6 +261,12 @@ export class Post extends HTMLElement {
 
     this.likeButton = this.shadowRoot.querySelector(".likeButton");
     this.likeButton.addEventListener("click", this.likeHandler.bind(this));
+
+    this.retweetButton = this.shadowRoot.querySelector(".retweetButton");
+    this.retweetButton.addEventListener(
+      "click",
+      this.retweetHandler.bind(this)
+    );
   }
 
   pinPostHandler(event) {
@@ -252,6 +296,34 @@ export class Post extends HTMLElement {
       this.likeButton.classList.add("active");
     } else {
       this.likeButton.classList.remove("active");
+    }
+  }
+
+  async retweetHandler(event) {
+    const postId = this.postData._id;
+
+    if (!postId) return;
+
+    let repost = await fetch(`${env.BACKEND_BASE_URL}/post/${postId}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${this.states.token}`,
+      },
+      body: JSON.stringify({ retweet: true }),
+    });
+
+    repost = await repost.json();
+
+    const retweetCountSpan = this.shadowRoot.querySelector(
+      ".retweetButton span"
+    );
+    retweetCountSpan.innerText = repost.retweetUsers.length || "";
+
+    if (repost.retweetUsers.includes(this.states.userId)) {
+      this.retweetButton.classList.add("active");
+    } else {
+      this.retweetButton.classList.remove("active");
     }
   }
 
