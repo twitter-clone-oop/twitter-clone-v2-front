@@ -5,7 +5,17 @@ export class PostModal extends HTMLElement {
     super();
     this.action = action;
 
+    console.log(action);
     this.attachShadow({ mode: "open" });
+
+    this.confirmBtnClass;
+    if (action === "pin") {
+      this.confirmBtnClass = "btn-primary";
+    } else if (action === "delete-post") {
+      this.confirmBtnClass = "btn-danger";
+    }
+
+    console.log(this.confirmBtnClass);
 
     this.shadowRoot.innerHTML = `
       <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous" />
@@ -65,6 +75,8 @@ export class PostModal extends HTMLElement {
           transition: all 0.5s ease-out;
         }
 
+
+
         
       </style>
 
@@ -78,7 +90,7 @@ export class PostModal extends HTMLElement {
         </div>
         <div class="modal-footer">
           <button id="cancel-btn" class="btn btn-secondary" type="button">Cancel</button>
-          <button id="confirm-btn" class="btn btn-primary" type="button">${confirmButtonLabel}</button>
+          <button id="confirm-btn" class="btn ${this.confirmBtnClass}" type="button">${confirmButtonLabel}</button>
         </div>
       </div>
     `;
