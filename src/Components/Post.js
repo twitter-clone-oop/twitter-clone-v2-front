@@ -50,11 +50,6 @@ export class Post extends HTMLElement {
     this.retweetedBy = this.isRetweet ? postData.postedBy.userName : "";
     postData = this.isRetweet ? postData.retweetData : postData;
 
-    if (this.isRetweet) {
-      console.log(postData);
-      console.log(postData.retweetUsers.includes(this.states.userId));
-    }
-
     this.retweetButtonActiveClass =
       postData.retweetUsers &&
       postData.retweetUsers.includes(this.states.userId)
@@ -327,6 +322,7 @@ export class Post extends HTMLElement {
     }
 
     const retweetEvent = new Event("retweet");
+    retweetEvent.repost = repost;
     this.dispatchEvent(retweetEvent);
   }
 
