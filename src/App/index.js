@@ -106,6 +106,14 @@ class Index {
     }
   }
 
+  async retweetHandler(event) {
+    const repost = event.repost;
+    console.log(repost);
+    const postCard = new Post(repost);
+    const postsArea = document.querySelector(".posts-area");
+    postsArea.prepend(postCard);
+  }
+
   async _getPosts() {
     let posts = await fetch(
       `${env.BACKEND_BASE_URL}/post/posts?followingOnly=true`,
@@ -132,6 +140,8 @@ class Index {
     newPostsArea.innerHTML = "";
     newPostsArea.addEventListener("pin-post", this.pinPostHandler.bind(this));
 
+    newPostsArea.addEventListener("retweet", this.retweetHandler.bind(this));
+
     const posts = await this._getPosts();
 
     posts.forEach((post) => {
@@ -150,13 +160,18 @@ class Index {
 
     let prevPinnedPostNode;
     let currentPinnedPostNode;
+    let updatedCurrentPinnedPostNode;
+
     postCards.forEach((post) => {
+      if (this.patchPostResponse.prevPinnedPost) {
+        if (
+          post.postData._id.toString() ===
+          this.patchPostResponse.prevPinnedPost._id
+        ) {
+          prevPinnedPostNode = post;
+        }
+      }
       if (
-        post.postData._id.toString() ===
-        this.patchPostResponse.prevPinnedPost._id
-      ) {
-        prevPinnedPostNode = post;
-      } else if (
         post.postData._id.toString() ===
         this.patchPostResponse.currentPinnedPost._id
       ) {
@@ -164,14 +179,17 @@ class Index {
       }
     });
 
-    const updatedPrevPinnedPostNode = new Post(
-      this.patchPostResponse.prevPinnedPost
-    );
-    const updatedCurrentPinnedPostNode = new Post(
+    if (this.patchPostResponse.prevPinnedPost) {
+      const updatedPrevPinnedPostNode = new Post(
+        this.patchPostResponse.prevPinnedPost
+      );
+
+      prevPinnedPostNode.replaceWith(updatedPrevPinnedPostNode);
+    }
+
+    updatedCurrentPinnedPostNode = new Post(
       this.patchPostResponse.currentPinnedPost
     );
-
-    prevPinnedPostNode.replaceWith(updatedPrevPinnedPostNode);
     currentPinnedPostNode.replaceWith(updatedCurrentPinnedPostNode);
   }
 

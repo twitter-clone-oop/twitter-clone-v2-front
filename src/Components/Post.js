@@ -50,6 +50,10 @@ export class Post extends HTMLElement {
     this.retweetedBy = this.isRetweet ? postData.postedBy.userName : "";
     postData = this.isRetweet ? postData.retweetData : postData;
 
+    if (this.isRetweet) {
+      console.log(postData);
+    }
+
     this.retweetButtonActiveClass =
       postData.retweetUsers &&
       postData.retweetUsers.includes(this.states.userId)
@@ -299,7 +303,7 @@ export class Post extends HTMLElement {
 
     if (!postId) return;
 
-    let repost = await fetch(`${env.BACKEND_BASE_URL}/post/${postId}`, {
+    let response = await fetch(`${env.BACKEND_BASE_URL}/post/${postId}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -308,20 +312,23 @@ export class Post extends HTMLElement {
       body: JSON.stringify({ retweet: true }),
     });
 
-    repost = await repost.json();
+    response = await response.json();
+
+    const post = response.post;
+    const repost = response.repost;
 
     const retweetCountSpan = this.shadowRoot.querySelector(
       ".retweetButton span"
     );
-    retweetCountSpan.innerText = repost.retweetUsers.length || "";
+    retweetCountSpan.innerText = post.retweetUsers.length || "";
 
-    if (repost.retweetUsers.includes(this.states.userId)) {
+    if (post.retweetUsers.includes(this.states.userId)) {
       this.retweetButton.classList.add("active");
     } else {
       this.retweetButton.classList.remove("active");
     }
 
-    const retweetEvent = new Event("retweet");
+    const retweetEvent = new Event("retweet", { bubbles: true });
     retweetEvent.repost = repost;
     this.dispatchEvent(retweetEvent);
   }
