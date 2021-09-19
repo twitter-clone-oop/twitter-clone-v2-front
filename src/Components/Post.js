@@ -14,6 +14,8 @@ export class Post extends HTMLElement {
 
     this.pinButton;
 
+    this.deleteButton;
+
     this.states = this.getStates();
 
     //pin
@@ -264,6 +266,12 @@ export class Post extends HTMLElement {
     this.pinButton = this.shadowRoot.querySelector(".pinButton");
     this.pinButton.addEventListener("click", this.pinPostHandler.bind(this));
 
+    this.deleteButton = this.shadowRoot.querySelector(".deleteButton");
+    this.deleteButton.addEventListener(
+      "click",
+      this.deletePostHandler.bind(this)
+    );
+
     this.likeButton = this.shadowRoot.querySelector(".likeButton");
     this.likeButton.addEventListener("click", this.likeHandler.bind(this));
 
@@ -277,6 +285,15 @@ export class Post extends HTMLElement {
   pinPostHandler(event) {
     const pinPostEvent = new Event("pin-post", { bubbles: true });
     this.dispatchEvent(pinPostEvent);
+  }
+
+  async deletePostHandler(event) {
+    const postId = this.postData._id;
+
+    //dispatch delete-post event
+    const deletePostEvent = new Event("delete-post", { bubbles: true });
+    deletePostEvent.postId = postId;
+    this.dispatchEvent(deletePostEvent);
   }
 
   async likeHandler(event) {
