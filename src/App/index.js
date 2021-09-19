@@ -36,7 +36,6 @@ class Index {
 
   async initPage() {
     const states = this.getStates();
-    console.log(states.token);
     this.isAuth = await this.checkAuth(states.token);
 
     if (this.isAuth) {
@@ -78,11 +77,32 @@ class Index {
       .querySelector("post-modal")
       .addEventListener(
         "confirm-modal",
-        this.pinPostConfirmHandler.bind(this, postId)
+        this.modalConfirmHandler.bind(this, postId)
       );
   }
 
-  async pinPostConfirmHandler(postId, event) {
+  deletePostHandler(event) {
+    //show modal
+    const postId = event.postId;
+
+    const deletePostModal = new PostModal(
+      "delete-post",
+      "Delete this post?",
+      "This post will be deleted.",
+      "Delete" //button color -> red
+    );
+
+    document
+      .querySelector("post-modal")
+      .addEventListener(
+        "confirm-modal",
+        this.modalConfirmHandler.bind(this, postId)
+      );
+
+    //addEventListener : confirm-delete-post event
+  }
+
+  async modalConfirmHandler(postId, event) {
     if (event.action === "pin") {
       //pin the post
       try {
@@ -105,6 +125,28 @@ class Index {
         console.log(error);
       }
     }
+
+    if (event.action === "delete-post") {
+      //delete the post
+      let deletedPostId = await fetch(
+        `${env.BACKEND_BASE_URL}/post/${postId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${this.token}`,
+          },
+        }
+      );
+      deletedPostId = await deletedPostId.json();
+      deletedPostId = deletedPostId.deletedPostId;
+
+      event.target.remove();
+
+      let deleteTargetPostCard = this.postCards.filter((post) => {
+        return post.postData._id === deletedPostId;
+      })[0];
+      deleteTargetPostCard.remove();
+    }
   }
 
   retweetHandler(event) {
@@ -122,6 +164,8 @@ class Index {
     let deleteTargetPostCard = this.postCards.filter((post) => {
       return post.postData._id === deleteTargetPostId;
     })[0];
+
+    console.log(deleteTargetPostCard);
 
     deleteTargetPostCard.remove();
   }
@@ -151,6 +195,11 @@ class Index {
     mainSectionContainer.removeChild(oldPostsArea);
     newPostsArea.innerHTML = "";
     newPostsArea.addEventListener("pin-post", this.pinPostHandler.bind(this));
+
+    newPostsArea.addEventListener(
+      "delete-post",
+      this.deletePostHandler.bind(this)
+    );
 
     newPostsArea.addEventListener("retweet", this.retweetHandler.bind(this));
     newPostsArea.addEventListener(
@@ -276,6 +325,7 @@ class Index {
     createPostForm.addEventListener("create-post", (event) => {
       const newPost = event.post.createdPost;
       const postCard = new Post(newPost);
+      this.postCards.push(postCard);
       const postsArea = document.querySelector(".posts-area");
       postsArea.prepend(postCard);
     });
