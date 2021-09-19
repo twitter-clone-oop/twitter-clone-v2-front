@@ -36,6 +36,7 @@ class Index {
 
   async initPage() {
     const states = this.getStates();
+    console.log(states.token);
     this.isAuth = await this.checkAuth(states.token);
 
     if (this.isAuth) {
