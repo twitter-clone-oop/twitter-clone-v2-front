@@ -325,6 +325,9 @@ export class Post extends HTMLElement {
     } else {
       this.retweetButton.classList.remove("active");
     }
+
+    const retweetEvent = new Event("retweet");
+    this.dispatchEvent(retweetEvent);
   }
 
   getStates() {
