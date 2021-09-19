@@ -106,12 +106,23 @@ class Index {
     }
   }
 
-  async retweetHandler(event) {
+  retweetHandler(event) {
     const repost = event.repost;
-    console.log(repost);
     const postCard = new Post(repost);
+    this.postCards.push(postCard);
     const postsArea = document.querySelector(".posts-area");
     postsArea.prepend(postCard);
+  }
+
+  unRetweetHandler(event) {
+    const repost = event.repost;
+    const deleteTargetPostId = repost._id;
+
+    let deleteTargetPostCard = this.postCards.filter((post) => {
+      return post.postData._id === deleteTargetPostId;
+    })[0];
+
+    deleteTargetPostCard.remove();
   }
 
   async _getPosts() {
@@ -141,6 +152,10 @@ class Index {
     newPostsArea.addEventListener("pin-post", this.pinPostHandler.bind(this));
 
     newPostsArea.addEventListener("retweet", this.retweetHandler.bind(this));
+    newPostsArea.addEventListener(
+      "un-retweet",
+      this.unRetweetHandler.bind(this)
+    );
 
     const posts = await this._getPosts();
 
@@ -148,7 +163,6 @@ class Index {
       const postCard = new Post(post);
       newPostsArea.appendChild(postCard);
       this.postCards.push(postCard);
-      this.postCards.push(typeof postCard);
     });
 
     mainSectionContainer.appendChild(newPostsArea);
