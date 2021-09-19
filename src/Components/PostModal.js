@@ -1,7 +1,7 @@
 import env from "../../env.js";
 
 export class PostModal extends HTMLElement {
-  constructor(action) {
+  constructor(action, modalTitle, modalContent, confirmButtonLabel) {
     super();
     this.action = action;
 
@@ -71,14 +71,14 @@ export class PostModal extends HTMLElement {
       <div class="backdrop">backdrop</div>
       <div class="modal">
         <div class="modal-header">
-          <h5 id="confirmPinModalLabel" class="modal-title">Pin this post?</h5>
+          <h5 id="confirmPinModalLabel" class="modal-title">${modalTitle}</h5>
         </div>
         <div class="modal-body">
-          <p>This post will appear at the top of your profile. You can only pin one post.</p>
+          <p>${modalContent}</p>
         </div>
         <div class="modal-footer">
           <button id="cancel-btn" class="btn btn-secondary" type="button">Cancel</button>
-          <button id="confirm-btn" class="btn btn-primary" type="button">Pin</button>
+          <button id="confirm-btn" class="btn btn-primary" type="button">${confirmButtonLabel}</button>
         </div>
       </div>
     `;
