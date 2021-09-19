@@ -66,7 +66,12 @@ class Index {
     // console.log(event.target.shadowRoot.querySelector(".post").dataset.id);
     const postId = event.target.shadowRoot.querySelector(".post").dataset.id;
 
-    const postModal = new PostModal("pin");
+    const postModal = new PostModal(
+      "pin",
+      "Pin this post?",
+      "This post will appear at the top of your profile. You can only pin one post.",
+      "Pin"
+    );
 
     document
       .querySelector("post-modal")
