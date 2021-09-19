@@ -33,6 +33,9 @@ export class Post extends HTMLElement {
         <button class="pinButton ${this.pinnedClass}" data-id="${postData._id}">
           <i class="fas fa-thumbtack"></i>
         </button>
+        <button class="deleteButton" datqa-id=${postData._id}>
+          <i class="fas fa-times"></i>
+        </button>
       `;
     }
 
@@ -125,6 +128,13 @@ export class Post extends HTMLElement {
         padding-left: var(--spacing);
         display: flex;
         flex-direction: column;
+        flex: 1;
+      }
+
+      .postContentContainer .header {
+        display: flex;
+      }
+      .postContentContainer .header .date {
         flex: 1;
       }
 
