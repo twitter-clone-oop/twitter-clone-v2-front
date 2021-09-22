@@ -283,8 +283,21 @@ export class Post extends HTMLElement {
   }
 
   pinPostHandler(event) {
-    const pinPostEvent = new Event("pin-post", { bubbles: true });
-    this.dispatchEvent(pinPostEvent);
+    // console.log(this.pinButton.classList.contains("active"));
+    const isActivePin = this.pinButton.classList.contains("active");
+    if (!isActivePin) {
+      const pinPostEvent = new Event("pin-post", { bubbles: true });
+      this.dispatchEvent(pinPostEvent);
+    } else {
+      //unpin event
+      const unPinPostEvent = new Event("unpin-post", { bubbles: true });
+      this.dispatchEvent(unPinPostEvent);
+    }
+  }
+
+  unpinPost() {
+    this.pinButton.classList.remove("active");
+    this.shadowRoot.querySelector(".pinnedPostText").innerHTML = "";
   }
 
   async deletePostHandler(event) {
@@ -305,7 +318,7 @@ export class Post extends HTMLElement {
           "Content-Type": "application/json",
           Authorization: `Bearer ${this.states.token}`,
         },
-        body: JSON.stringify({ likes: true }),
+        body: JSON.stringify({ action: "like" }),
       }
     );
 
@@ -332,7 +345,7 @@ export class Post extends HTMLElement {
         "Content-Type": "application/json",
         Authorization: `Bearer ${this.states.token}`,
       },
-      body: JSON.stringify({ retweet: true }),
+      body: JSON.stringify({ action: "retweet" }),
     });
 
     response = await response.json();

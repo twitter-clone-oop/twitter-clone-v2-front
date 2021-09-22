@@ -63,7 +63,6 @@ class Index {
   }
 
   pinPostHandler(event) {
-    // console.log(event.target.shadowRoot.querySelector(".post").dataset.id);
     const postId = event.target.shadowRoot.querySelector(".post").dataset.id;
 
     const postModal = new PostModal(
@@ -71,6 +70,24 @@ class Index {
       "Pin this post?",
       "This post will appear at the top of your profile. You can only pin one post.",
       "Pin"
+    );
+
+    document
+      .querySelector("post-modal")
+      .addEventListener(
+        "confirm-modal",
+        this.modalConfirmHandler.bind(this, postId)
+      );
+  }
+
+  unpinPostHandler(event) {
+    const postId = event.target.shadowRoot.querySelector(".post").dataset.id;
+
+    const postModal = new PostModal(
+      "unpin",
+      "Unpin this post?",
+      "This post will be unpinned from your profile page.",
+      "Unpin"
     );
 
     document
@@ -103,6 +120,7 @@ class Index {
   }
 
   async modalConfirmHandler(postId, event) {
+    console.log("event.action", event.action);
     if (event.action === "pin") {
       //pin the post
       try {
@@ -114,19 +132,33 @@ class Index {
               "Content-Type": "application/json",
               Authorization: `Bearer ${this.token}`,
             },
-            body: JSON.stringify({ pinned: true }),
+            body: JSON.stringify({ action: "pin", filter: { pinned: true } }),
           }
         );
         this.patchPostResponse = await patchPostResponse.json();
 
         event.target.remove();
-        this.updatePostsArea();
+        this.updatePostsArea(event.action);
       } catch (error) {
         console.log(error);
       }
-    }
-
-    if (event.action === "delete-post") {
+    } else if (event.action === "unpin") {
+      let patchPostResponse = await fetch(
+        `${env.BACKEND_BASE_URL}/post/${postId}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${this.token}`,
+          },
+          body: JSON.stringify({ action: "unpin" }),
+        }
+      );
+      this.patchPostResponse = await patchPostResponse.json();
+      console.log("unpin", this.patchPostResponse);
+      event.target.remove();
+      this.updatePostsArea(event.action);
+    } else if (event.action === "delete-post") {
       //delete the post
       let deletedPostId = await fetch(
         `${env.BACKEND_BASE_URL}/post/${postId}`,
@@ -197,6 +229,11 @@ class Index {
     newPostsArea.addEventListener("pin-post", this.pinPostHandler.bind(this));
 
     newPostsArea.addEventListener(
+      "unpin-post",
+      this.unpinPostHandler.bind(this)
+    );
+
+    newPostsArea.addEventListener(
       "delete-post",
       this.deletePostHandler.bind(this)
     );
@@ -218,43 +255,56 @@ class Index {
     mainSectionContainer.appendChild(newPostsArea);
   }
 
-  updatePostsArea() {
-    // select prevPinnedPost
+  updatePostsArea(action) {
     const postCards = document.querySelectorAll("post-card");
+    console.log("action", action);
+    if (action === "pin") {
+      let prevPinnedPostNode;
+      let currentPinnedPostNode;
+      let updatedCurrentPinnedPostNode;
 
-    let prevPinnedPostNode;
-    let currentPinnedPostNode;
-    let updatedCurrentPinnedPostNode;
-
-    postCards.forEach((post) => {
-      if (this.patchPostResponse.prevPinnedPost) {
+      postCards.forEach((post) => {
+        if (this.patchPostResponse.prevPinnedPost) {
+          if (
+            post.postData._id.toString() ===
+            this.patchPostResponse.prevPinnedPost._id
+          ) {
+            prevPinnedPostNode = post;
+          }
+        }
         if (
           post.postData._id.toString() ===
-          this.patchPostResponse.prevPinnedPost._id
+          this.patchPostResponse.currentPinnedPost._id
         ) {
-          prevPinnedPostNode = post;
+          currentPinnedPostNode = post;
         }
-      }
-      if (
-        post.postData._id.toString() ===
-        this.patchPostResponse.currentPinnedPost._id
-      ) {
-        currentPinnedPostNode = post;
-      }
-    });
+      });
 
-    if (this.patchPostResponse.prevPinnedPost) {
-      const updatedPrevPinnedPostNode = new Post(
-        this.patchPostResponse.prevPinnedPost
+      if (this.patchPostResponse.prevPinnedPost) {
+        const updatedPrevPinnedPostNode = new Post(
+          this.patchPostResponse.prevPinnedPost
+        );
+
+        prevPinnedPostNode.replaceWith(updatedPrevPinnedPostNode);
+      }
+
+      updatedCurrentPinnedPostNode = new Post(
+        this.patchPostResponse.currentPinnedPost
       );
+      currentPinnedPostNode.replaceWith(updatedCurrentPinnedPostNode);
+    } else if (action === "unpin") {
+      let unpinnedPostNode;
 
-      prevPinnedPostNode.replaceWith(updatedPrevPinnedPostNode);
+      postCards.forEach((post) => {
+        if (
+          post.postData._id.toString() === this.patchPostResponse.unpinnedPostId
+        ) {
+          unpinnedPostNode = post;
+        }
+      });
+
+      unpinnedPostNode.unpinPost();
     }
-
-    updatedCurrentPinnedPostNode = new Post(
-      this.patchPostResponse.currentPinnedPost
-    );
-    currentPinnedPostNode.replaceWith(updatedCurrentPinnedPostNode);
   }
 
   loadMainPage() {
