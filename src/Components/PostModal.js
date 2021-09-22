@@ -8,6 +8,7 @@ export class PostModal extends HTMLElement {
     this.attachShadow({ mode: "open" });
 
     this.confirmBtnClass;
+    console.log(action);
     if (action === "pin") {
       this.confirmBtnClass = "btn-primary";
     } else if (action === "delete-post") {
