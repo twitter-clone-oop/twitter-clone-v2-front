@@ -2,7 +2,13 @@ import env from "../../env.js";
 import { PostForm } from "./PostForm.js";
 
 export class PostModal extends HTMLElement {
-  constructor(action, modalTitle, modalContent, confirmButtonLabel) {
+  constructor(
+    action,
+    modalTitle,
+    modalContent,
+    confirmButtonLabel,
+    profilePic = null
+  ) {
     super();
     this.action = action;
 
@@ -24,7 +30,7 @@ export class PostModal extends HTMLElement {
       this.modalContent = `
         <div id="originalPostContainer"></div>
         <div class="postFormContainer">
-          <div class="userImageContainer"><img src="" alt="User's profile pictur"/></div>
+          <div class="userImageContainer"><img src="${profilePic}" alt="User's profile pictur"/></div>
           <div class="textareaContainer">
             <textarea id="replyTextarea" placeholder="What's happening?"></textarea>
           </div>
