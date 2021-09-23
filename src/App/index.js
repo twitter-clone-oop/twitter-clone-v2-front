@@ -155,7 +155,7 @@ class Index {
         }
       );
       this.patchPostResponse = await patchPostResponse.json();
-      console.log("unpin", this.patchPostResponse);
+
       event.target.remove();
       this.updatePostsArea(event.action);
     } else if (event.action === "delete-post") {
@@ -178,6 +178,8 @@ class Index {
         return post.postData._id === deletedPostId;
       })[0];
       deleteTargetPostCard.remove();
+    } else if (event.action === "reply") {
+      console.log("action = reply");
     }
   }
 
@@ -243,6 +245,8 @@ class Index {
       "un-retweet",
       this.unRetweetHandler.bind(this)
     );
+
+    newPostsArea.addEventListener("reply", this.replyHandler.bind(this));
 
     const posts = await this._getPosts();
 
@@ -325,6 +329,24 @@ class Index {
     </div>
     `;
     this.wrapper.innerHTML = mainLayout;
+  }
+
+  replyHandler(event) {
+    const postId = event.postId;
+    const replyModal = new PostModal(
+      "reply",
+      "Reply",
+      "",
+      "Reply",
+      `${env.BACKEND_BASE_URL}/${this.userProfile.profilePic}`
+    );
+
+    document
+      .querySelector("post-modal")
+      .addEventListener(
+        "confirm-modal",
+        this.modalConfirmHandler.bind(this, postId)
+      );
   }
 
   getStates() {
