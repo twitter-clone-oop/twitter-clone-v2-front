@@ -41,6 +41,20 @@ export class Post extends HTMLElement {
       `;
     }
 
+    //repply
+
+    this.replyButton;
+    this.replyFlag = "";
+    if (postData.replyTo && postData.replyTo._id) {
+      const replyToUsername = postData.replyTo.postedBy.username;
+
+      replyFlag = `
+        <div calss="replyFlag">
+          Replying to <a href="/profile/${replyToUsername}">@${replyToUsername}</a>
+        </div>
+      `;
+    }
+
     // like
 
     this.likeButtonActiveClass = postData.likes.includes(this.states.userId)
@@ -233,13 +247,13 @@ export class Post extends HTMLElement {
               )}</span>
               ${this.buttons}
             </div>
-            <!-- replyFlag -->
+            ${this.replyFlag}
             <div class="postBody">
               <span>${postData.content}</span>
             </div>
             <div class="postFooter">
               <div class="postButtonContainer">
-                <button data-toggle="modal" data-target="replyModal">
+                <button class="replyButton">
                   <i class="far fa-comment"></i>
                 </button>
               </div>

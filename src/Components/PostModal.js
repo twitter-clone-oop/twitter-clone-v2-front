@@ -1,4 +1,5 @@
 import env from "../../env.js";
+import { PostForm } from "./PostForm.js";
 
 export class PostModal extends HTMLElement {
   constructor(action, modalTitle, modalContent, confirmButtonLabel) {
@@ -11,8 +12,24 @@ export class PostModal extends HTMLElement {
     console.log(action);
     if (action === "pin") {
       this.confirmBtnClass = "btn-primary";
-    } else if (action === "delete-post") {
+    } else if (action === "delete-post" || action == "unpin") {
       this.confirmBtnClass = "btn-danger";
+    } else if (action === "reply") {
+      this.confirmBtnClass = "btn-primary";
+    }
+
+    this.modalContent = `<p>${modalContent}</p>`;
+
+    if (action === "reply") {
+      this.modalContent = `
+        <div id="originalPostContainer"></div>
+        <div class="postFormContainer">
+          <div class="userImageContainer"><img src="" alt="User's profile pictur"/></div>
+          <div class="textareaContainer">
+            <textarea id="replyTextarea" placeholder="What's happening?"></textarea>
+          </div>
+        </div>
+      `;
     }
 
     this.shadowRoot.innerHTML = `
@@ -72,7 +89,35 @@ export class PostModal extends HTMLElement {
           background: white;
           transition: all 0.5s ease-out;
         }
-
+        
+        .postFormContainer {
+          display: flex;
+          padding: var(--spacing);
+          border-bottom: 10px solid rgb(230, 236, 240);
+          flex-shrink: 0;
+        }
+        .userImageContainer {
+          width: 50px;
+          height: 50px;
+        }
+  
+        .userImageContainer img {
+          width: 100%;
+          border-radius: 50%;
+          background-color: #fff;
+        }
+  
+        .textareaContainer {
+          flex: 1;
+          padding-left: var(--spacing)
+        }
+  
+        .textareaContainer textarea {
+          width: 100%;
+          border: none;
+          resize: none;
+          font-size: 19px;
+        }
 
 
         
@@ -84,7 +129,7 @@ export class PostModal extends HTMLElement {
           <h5 id="confirmPinModalLabel" class="modal-title">${modalTitle}</h5>
         </div>
         <div class="modal-body">
-          <p>${modalContent}</p>
+          ${this.modalContent}
         </div>
         <div class="modal-footer">
           <button id="cancel-btn" class="btn btn-secondary" type="button">Cancel</button>
