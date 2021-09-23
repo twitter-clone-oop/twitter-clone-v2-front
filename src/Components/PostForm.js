@@ -8,6 +8,9 @@ export class PostForm extends HTMLElement {
     this.token = sessionStorage.getItem("token");
     this.userId = sessionStorage.getItem("userId");
 
+    this.profilePic = this.getAttribute("profile-image-url");
+    console.log(this.profilePic);
+
     this.postTextarea;
     this.profileImageTag;
 
