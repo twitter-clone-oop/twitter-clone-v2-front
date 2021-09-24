@@ -1,5 +1,6 @@
 import env from "../../env.js";
 import { PostForm } from "./PostForm.js";
+import { Post } from "./Post.js";
 
 export class PostModal extends HTMLElement {
   constructor(
@@ -7,10 +8,12 @@ export class PostModal extends HTMLElement {
     modalTitle,
     modalContent,
     confirmButtonLabel,
-    profilePic = null
+    profilePic = null,
+    originalPostData = null
   ) {
     super();
     this.action = action;
+    this.originalPostData = originalPostData;
 
     this.attachShadow({ mode: "open" });
 
@@ -127,6 +130,10 @@ export class PostModal extends HTMLElement {
           font-size: 19px;
         }
 
+        .replyFlag a {
+          color: var(--blue);
+        }
+
 
         
       </style>
@@ -169,8 +176,19 @@ export class PostModal extends HTMLElement {
       this.confirmButtonHandler.bind(this)
     );
 
-    this.replyTextarea = this.shadowRoot.querySelector("#replyTextarea");
-    this.replyTextarea.addEventListener("keyup", this.keyupHandler.bind(this));
+    if (this.action === "reply") {
+      const originalPost = new Post(this.originalPostData);
+      const originalPostContainer = this.shadowRoot.querySelector(
+        "#originalPostContainer"
+      );
+      originalPostContainer.appendChild(originalPost);
+
+      this.replyTextarea = this.shadowRoot.querySelector("#replyTextarea");
+      this.replyTextarea.addEventListener(
+        "keyup",
+        this.keyupHandler.bind(this)
+      );
+    }
   }
 
   cancleButtonHandler(event) {
