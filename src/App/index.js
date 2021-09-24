@@ -179,7 +179,22 @@ class Index {
       })[0];
       deleteTargetPostCard.remove();
     } else if (event.action === "reply") {
-      console.log("action = reply");
+      const replyTo = postId;
+      const content = event.content;
+      let response = await fetch(`${env.BACKEND_BASE_URL}/post`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${this.token}`,
+        },
+        body: JSON.stringify({ action: event.action, replyTo, content }),
+      });
+
+      response = await response.json();
+      event.target.remove();
+      // call func with post
+
+      this.updatePostsArea(event.action, response.createdPost);
     }
   }
 
@@ -259,7 +274,7 @@ class Index {
     mainSectionContainer.appendChild(newPostsArea);
   }
 
-  updatePostsArea(action) {
+  updatePostsArea(action, post = null) {
     const postCards = document.querySelectorAll("post-card");
     console.log("action", action);
     if (action === "pin") {
@@ -308,6 +323,9 @@ class Index {
       });
 
       unpinnedPostNode.unpinPost();
+    } else if (action === "reply") {
+      const replyPost = new Post(post);
+      document.querySelector(".posts-area").prepend(replyPost);
     }
   }
 
@@ -332,7 +350,7 @@ class Index {
   }
 
   replyHandler(event) {
-    const postId = event.postId;
+    const replyTo = event.replyTo;
     const replyModal = new PostModal(
       "reply",
       "Reply",
@@ -345,7 +363,7 @@ class Index {
       .querySelector("post-modal")
       .addEventListener(
         "confirm-modal",
-        this.modalConfirmHandler.bind(this, postId)
+        this.modalConfirmHandler.bind(this, replyTo)
       );
   }
 
