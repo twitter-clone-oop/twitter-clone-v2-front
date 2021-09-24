@@ -38,6 +38,8 @@ export class PostModal extends HTMLElement {
       `;
     }
 
+    this.replyTextarea;
+
     this.shadowRoot.innerHTML = `
       <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous" />
       <link rel="stylesheet" href="assets/styles/fontawesome/css/all.css" />
@@ -158,10 +160,17 @@ export class PostModal extends HTMLElement {
     );
 
     this.confirmButton = this.shadowRoot.querySelector("#confirm-btn");
+    if (this.action === "reply") {
+      this.confirmButton.disabled = true;
+    }
+
     this.confirmButton.addEventListener(
       "click",
       this.confirmButtonHandler.bind(this)
     );
+
+    this.replyTextarea = this.shadowRoot.querySelector("#replyTextarea");
+    this.replyTextarea.addEventListener("keyup", this.keyupHandler.bind(this));
   }
 
   cancleButtonHandler(event) {
@@ -178,6 +187,14 @@ export class PostModal extends HTMLElement {
     }
 
     this.dispatchEvent(modalConfirmEvent);
+  }
+
+  keyupHandler(event) {
+    if (this.replyTextarea.value !== "") {
+      this.confirmButton.disabled = false;
+    } else {
+      this.confirmButton.disabled = true;
+    }
   }
 
   showModal() {
