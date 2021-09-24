@@ -266,6 +266,7 @@ class Index {
     const posts = await this._getPosts();
 
     posts.forEach((post) => {
+      console.log(post);
       const postCard = new Post(post);
       newPostsArea.appendChild(postCard);
       this.postCards.push(postCard);
