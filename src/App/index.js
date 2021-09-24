@@ -352,12 +352,15 @@ class Index {
 
   replyHandler(event) {
     const replyTo = event.replyTo;
+    const originalPostData = event.originalPostData;
+
     const replyModal = new PostModal(
       "reply",
       "Reply",
       "",
       "Reply",
-      `${env.BACKEND_BASE_URL}/${this.userProfile.profilePic}`
+      `${env.BACKEND_BASE_URL}/${this.userProfile.profilePic}`,
+      originalPostData
     );
 
     document

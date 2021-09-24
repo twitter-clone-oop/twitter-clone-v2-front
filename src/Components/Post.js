@@ -396,6 +396,7 @@ export class Post extends HTMLElement {
 
     const replyPostEvent = new Event("reply", { bubbles: true });
     replyPostEvent.replyTo = postId;
+    replyPostEvent.originalPostData = this.postData;
     this.dispatchEvent(replyPostEvent);
   }
 
