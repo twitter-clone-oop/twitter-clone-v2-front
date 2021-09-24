@@ -171,6 +171,12 @@ export class PostModal extends HTMLElement {
   confirmButtonHandler(event) {
     const modalConfirmEvent = new Event("confirm-modal");
     modalConfirmEvent.action = this.action;
+
+    if (event.target.textContent === "Reply") {
+      modalConfirmEvent.content =
+        this.shadowRoot.querySelector("#replyTextarea").value;
+    }
+
     this.dispatchEvent(modalConfirmEvent);
   }
 

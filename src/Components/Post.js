@@ -41,15 +41,15 @@ export class Post extends HTMLElement {
       `;
     }
 
-    //repply
+    //reply
 
     this.replyButton;
     this.replyFlag = "";
     if (postData.replyTo && postData.replyTo._id) {
       const replyToUsername = postData.replyTo.postedBy.username;
 
-      replyFlag = `
-        <div calss="replyFlag">
+      this.replyFlag = `
+        <div class="replyFlag">
           Replying to <a href="/profile/${replyToUsername}">@${replyToUsername}</a>
         </div>
       `;
@@ -294,6 +294,9 @@ export class Post extends HTMLElement {
       "click",
       this.retweetHandler.bind(this)
     );
+
+    this.replyButton = this.shadowRoot.querySelector(".replyButton");
+    this.replyButton.addEventListener("click", this.replyHandler.bind(this));
   }
 
   pinPostHandler(event) {
@@ -385,6 +388,14 @@ export class Post extends HTMLElement {
       retweetEvent.repost = repost;
       this.dispatchEvent(retweetEvent);
     }
+  }
+
+  replyHandler(evnet) {
+    const postId = this.postData._id;
+
+    const replyPostEvent = new Event("reply", { bubbles: true });
+    replyPostEvent.replyTo = postId;
+    this.dispatchEvent(replyPostEvent);
   }
 
   getStates() {
