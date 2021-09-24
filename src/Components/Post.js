@@ -46,7 +46,8 @@ export class Post extends HTMLElement {
     this.replyButton;
     this.replyFlag = "";
     if (postData.replyTo && postData.replyTo._id) {
-      const replyToUsername = postData.replyTo.postedBy.username;
+      console.log(postData.replyTo);
+      const replyToUsername = postData.replyTo.postedBy.userName;
 
       this.replyFlag = `
         <div class="replyFlag">
