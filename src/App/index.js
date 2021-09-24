@@ -1,5 +1,6 @@
 import { Login } from "../App/login.js";
 import { Signup } from "../App/signup.js";
+import { Profile } from "../App/Profile.js";
 
 import { Navbar } from "../Components/Navbar.js";
 import { PostForm } from "../Components/PostForm.js";
@@ -14,6 +15,7 @@ class Index {
 
     this.Login;
     this.Signup;
+    this.Profile;
 
     this.navbar;
 
@@ -434,12 +436,21 @@ class Index {
   initNavbar() {
     this.navbar = document.querySelector("nav-bar");
     this.navbar.addEventListener("nav-home", this.navHomeHandler.bind(this));
+    this.navbar.addEventListener(
+      "nav-profile",
+      this.navProfileHandler.bind(this)
+    );
   }
 
   navHomeHandler() {
     console.log("home");
     this.loadMainPage();
     this.renderPosts();
+  }
+
+  navProfileHandler() {
+    console.log("profile");
+    this.Profile = new Profile();
   }
 
   setAutoLogout = (milliseconds) => {

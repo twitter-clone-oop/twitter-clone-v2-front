@@ -43,7 +43,7 @@ export class Navbar extends HTMLElement {
         <a>
           <i class="fas fa-envelope"></i>
         </a>
-        <a>
+        <a id="nav-profile">
           <i class="fas fa-user"></i>
         </a>
         <a>
@@ -57,11 +57,21 @@ export class Navbar extends HTMLElement {
     this.shadowRoot
       .querySelector("#nav-home")
       .addEventListener("click", this.navHomeHandler.bind(this));
+
+    this.shadowRoot
+      .querySelector("#nav-profile")
+      .addEventListener("click", this.navProfileHandler.bind(this));
   }
 
   navHomeHandler() {
     const navHomeEvent = new Event("nav-home", { bubbles: true });
     this.dispatchEvent(navHomeEvent);
+  }
+
+  navProfileHandler() {
+    console.log("Pro");
+    const navProfileEvent = new Event("nav-profile", { bubbles: true });
+    this.dispatchEvent(navProfileEvent);
   }
 }
 
