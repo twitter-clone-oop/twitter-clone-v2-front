@@ -31,7 +31,7 @@ export class Navbar extends HTMLElement {
         }
       </style>
       <nav>
-        <a>
+        <a id="nav-home">
           <i class="fas fa-dove"></i>
         </a>
         <a>
@@ -53,7 +53,16 @@ export class Navbar extends HTMLElement {
     `;
   }
 
-  connectedCallback() {}
+  connectedCallback() {
+    this.shadowRoot
+      .querySelector("#nav-home")
+      .addEventListener("click", this.navHomeHandler.bind(this));
+  }
+
+  navHomeHandler() {
+    const navHomeEvent = new Event("nav-home", { bubbles: true });
+    this.dispatchEvent(navHomeEvent);
+  }
 }
 
 customElements.define("nav-bar", Navbar);

@@ -15,6 +15,8 @@ class Index {
     this.Login;
     this.Signup;
 
+    this.navbar;
+
     this.token;
     this.userId;
     this.expiryDate;
@@ -348,6 +350,9 @@ class Index {
     </div>
     `;
     this.wrapper.innerHTML = mainLayout;
+
+    //init navbar
+    this.initNavbar();
   }
 
   replyHandler(event) {
@@ -424,6 +429,18 @@ class Index {
       postsArea.prepend(postCard);
     });
   };
+
+  //navbar
+  initNavbar() {
+    this.navbar = document.querySelector("nav-bar");
+    this.navbar.addEventListener("nav-home", this.navHomeHandler.bind(this));
+  }
+
+  navHomeHandler() {
+    console.log("home");
+    this.loadMainPage();
+    this.renderPosts();
+  }
 
   setAutoLogout = (milliseconds) => {
     setTimeout(() => {
