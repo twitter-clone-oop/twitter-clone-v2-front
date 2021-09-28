@@ -69,7 +69,6 @@ export class Navbar extends HTMLElement {
   }
 
   navProfileHandler() {
-    console.log("Pro");
     const navProfileEvent = new Event("nav-profile", { bubbles: true });
     this.dispatchEvent(navProfileEvent);
   }
