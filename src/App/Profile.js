@@ -115,6 +115,8 @@ export class Profile {
 
     this.wrapper = document.querySelector(".mainSectionContainer");
     this.wrapper.innerHTML = this.profilePage;
+
+    this.loadPosts();
   }
 
   async loadPosts() {
@@ -135,9 +137,20 @@ export class Profile {
     this.outputPosts(pinnedPostData, pinnedPostContainer);
 
     // posts
-    let url =
+    url =
       `${env.BACKEND_BASE_URL}/post/posts?` +
       new URLSearchParams({ postedBy: this.profileUserId, isReply: false });
+
+    let postsData = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${this.token}`,
+      },
+    });
+
+    postsData = await postsData.json();
+
+    const postsContainer = document.querySelector(".postsContainer");
+    this.outputPosts(postsData, postsContainer);
   }
 
   outputPosts(posts, container) {
