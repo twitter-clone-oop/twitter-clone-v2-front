@@ -66,145 +66,6 @@ export class Index {
     }
   }
 
-  // unpinPostHandler(event) {
-  //   const postId = event.target.shadowRoot.querySelector(".post").dataset.id;
-
-  //   const postModal = new PostModal(
-  //     "unpin",
-  //     "Unpin this post?",
-  //     "This post will be unpinned from your profile page.",
-  //     "Unpin"
-  //   );
-
-  //   document
-  //     .querySelector("post-modal")
-  //     .addEventListener(
-  //       "confirm-modal",
-  //       this.modalConfirmHandler.bind(this, postId)
-  //     );
-  // }
-
-  // deletePostHandler(event) {
-  //   //show modal
-  //   const postId = event.postId;
-
-  //   const deletePostModal = new PostModal(
-  //     "delete-post",
-  //     "Delete this post?",
-  //     "This post will be deleted.",
-  //     "Delete" //button color -> red
-  //   );
-
-  //   document
-  //     .querySelector("post-modal")
-  //     .addEventListener(
-  //       "confirm-modal",
-  //       this.modalConfirmHandler.bind(this, postId)
-  //     );
-
-  //   //addEventListener : confirm-delete-post event
-  // }
-
-  // async modalConfirmHandler(postId, event) {
-  //   console.log("event.action", event.action);
-  //   if (event.action === "pin") {
-  //     //pin the post
-  //     try {
-  //       let patchPostResponse = await fetch(
-  //         `${env.BACKEND_BASE_URL}/post/${postId}`,
-  //         {
-  //           method: "PATCH",
-  //           headers: {
-  //             "Content-Type": "application/json",
-  //             Authorization: `Bearer ${this.token}`,
-  //           },
-  //           body: JSON.stringify({ action: "pin", filter: { pinned: true } }),
-  //         }
-  //       );
-  //       this.patchPostResponse = await patchPostResponse.json();
-
-  //       event.target.remove();
-  //       this.updatePostsArea(event.action);
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   } else if (event.action === "unpin") {
-  //     let patchPostResponse = await fetch(
-  //       `${env.BACKEND_BASE_URL}/post/${postId}`,
-  //       {
-  //         method: "PATCH",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //           Authorization: `Bearer ${this.token}`,
-  //         },
-  //         body: JSON.stringify({ action: "unpin" }),
-  //       }
-  //     );
-  //     this.patchPostResponse = await patchPostResponse.json();
-
-  //     event.target.remove();
-  //     this.updatePostsArea(event.action);
-  //   } else if (event.action === "delete-post") {
-  //     //delete the post
-  //     let deletedPostId = await fetch(
-  //       `${env.BACKEND_BASE_URL}/post/${postId}`,
-  //       {
-  //         method: "DELETE",
-  //         headers: {
-  //           Authorization: `Bearer ${this.token}`,
-  //         },
-  //       }
-  //     );
-  //     deletedPostId = await deletedPostId.json();
-  //     deletedPostId = deletedPostId.deletedPostId;
-
-  //     event.target.remove();
-
-  //     let deleteTargetPostCard = this.postCards.filter((post) => {
-  //       return post.postData._id === deletedPostId;
-  //     })[0];
-  //     deleteTargetPostCard.remove();
-  //   } else if (event.action === "reply") {
-  //     const replyTo = postId;
-  //     const content = event.content;
-  //     let response = await fetch(`${env.BACKEND_BASE_URL}/post`, {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         Authorization: `Bearer ${this.token}`,
-  //       },
-  //       body: JSON.stringify({ action: event.action, replyTo, content }),
-  //     });
-
-  //     response = await response.json();
-  //     event.target.remove();
-  //     // call func with post
-
-  //     this.updatePostsArea(event.action, response.createdPost);
-  //   }
-  // }
-
-  // retweetHandler(event) {
-  //   const repost = event.repost;
-  //   const postCard = new Post(repost);
-  //   this.postCards.push(postCard);
-  //   const postsArea = document.querySelector(".posts-area");
-  //   postsArea.prepend(postCard);
-  // }
-
-  // unRetweetHandler(event) {
-  //   const repost = event.repost;
-  //   const deleteTargetPostId = repost._id;
-
-  //   let deleteTargetPostCard = this.postCards.filter((post) => {
-  //     return post.postData._id === deleteTargetPostId;
-  //   })[0];
-
-  //   console.log(deleteTargetPostCard);
-
-  //   deleteTargetPostCard.remove();
-  // }
-
   async _getPosts() {
     let posts = await fetch(
       `${env.BACKEND_BASE_URL}/post/posts?followingOnly=true`,
@@ -229,30 +90,10 @@ export class Index {
 
     mainSectionContainer.removeChild(oldPostsArea);
     newPostsArea.innerHTML = "";
-    // newPostsArea.addEventListener("pin-post", this.pinPostHandler.bind(this));
-
-    // newPostsArea.addEventListener(
-    //   "unpin-post",
-    //   this.unpinPostHandler.bind(this)
-    // );
-
-    // newPostsArea.addEventListener(
-    //   "delete-post",
-    //   this.deletePostHandler.bind(this)
-    // );
-
-    // newPostsArea.addEventListener("retweet", this.retweetHandler.bind(this));
-    // newPostsArea.addEventListener(
-    //   "un-retweet",
-    //   this.unRetweetHandler.bind(this)
-    // );
-
-    // newPostsArea.addEventListener("reply", this.replyHandler.bind(this));
 
     const posts = await this._getPosts();
 
     posts.forEach((post) => {
-      console.log("index post", post);
       const postCard = new Post(post);
       newPostsArea.appendChild(postCard);
       this.postCards.push(postCard);
@@ -260,61 +101,6 @@ export class Index {
 
     mainSectionContainer.appendChild(newPostsArea);
   }
-
-  // updatePostsArea(action, post = null) {
-  //   const postCards = document.querySelectorAll("post-card");
-  //   console.log("action", action);
-  //   if (action === "pin") {
-  //     let prevPinnedPostNode;
-  //     let currentPinnedPostNode;
-  //     let updatedCurrentPinnedPostNode;
-
-  //     postCards.forEach((post) => {
-  //       if (this.patchPostResponse.prevPinnedPost) {
-  //         if (
-  //           post.postData._id.toString() ===
-  //           this.patchPostResponse.prevPinnedPost._id
-  //         ) {
-  //           prevPinnedPostNode = post;
-  //         }
-  //       }
-  //       if (
-  //         post.postData._id.toString() ===
-  //         this.patchPostResponse.currentPinnedPost._id
-  //       ) {
-  //         currentPinnedPostNode = post;
-  //       }
-  //     });
-
-  //     if (this.patchPostResponse.prevPinnedPost) {
-  //       const updatedPrevPinnedPostNode = new Post(
-  //         this.patchPostResponse.prevPinnedPost
-  //       );
-
-  //       prevPinnedPostNode.replaceWith(updatedPrevPinnedPostNode);
-  //     }
-
-  //     updatedCurrentPinnedPostNode = new Post(
-  //       this.patchPostResponse.currentPinnedPost
-  //     );
-  //     currentPinnedPostNode.replaceWith(updatedCurrentPinnedPostNode);
-  //   } else if (action === "unpin") {
-  //     let unpinnedPostNode;
-
-  //     postCards.forEach((post) => {
-  //       if (
-  //         post.postData._id.toString() === this.patchPostResponse.unpinnedPostId
-  //       ) {
-  //         unpinnedPostNode = post;
-  //       }
-  //     });
-
-  //     unpinnedPostNode.unpinPost();
-  //   } else if (action === "reply") {
-  //     const replyPost = new Post(post);
-  //     document.querySelector(".posts-area").prepend(replyPost);
-  //   }
-  // }
 
   loadMainPage() {
     const mainLayout = `
@@ -338,27 +124,6 @@ export class Index {
     //init navbar
     this.initNavbar();
   }
-
-  // replyHandler(event) {
-  //   const replyTo = event.replyTo;
-  //   const originalPostData = event.originalPostData;
-
-  //   const replyModal = new PostModal(
-  //     "reply",
-  //     "Reply",
-  //     "",
-  //     "Reply",
-  //     `${env.BACKEND_BASE_URL}/${this.userProfile.profilePic}`,
-  //     originalPostData
-  //   );
-
-  //   document
-  //     .querySelector("post-modal")
-  //     .addEventListener(
-  //       "confirm-modal",
-  //       this.modalConfirmHandler.bind(this, replyTo)
-  //     );
-  // }
 
   getStates() {
     return {
@@ -425,7 +190,6 @@ export class Index {
   }
 
   navHomeHandler() {
-    console.log("home");
     this.loadMainPage();
     this.renderPosts();
   }
@@ -461,21 +225,6 @@ export class Index {
   }
 
   async fetchUserProfile() {
-    // let user = await fetch(`${env.BACKEND_BASE_URL}/user/profile`, {
-    //   headers: {
-    //     Authorization: `Bearer ${this.token}`,
-    //   },
-    // });
-
-    // fetch(`${env.BACKEND_BASE_URL}/user/profile`, {
-    //   headers: {
-    //     Authorization: "Bearer " + this.token,
-    //   },
-    //   method: "GET",
-    // }).then((response) => {
-    //   console.log("done...");
-    // });
-
     let user = await fetch(`${env.BACKEND_BASE_URL}/user/profile`, {
       headers: {
         Authorization: "Bearer " + this.token,
@@ -489,15 +238,3 @@ export class Index {
 }
 
 new Index();
-
-// const postForm = document.querySelector("create-post-form");
-// postForm.addEventListener("create-post", () => {
-//   const content = postForm.getAttribute("data");
-
-//   // fetch("create post url", {
-//   //   method: "POST",
-//   //   body: {
-//   //     creator,
-//   //     content,
-//   // },
-// });

@@ -13,7 +13,6 @@ export class Post extends HTMLElement {
     this.getUserProfile();
 
     this.postData = postData;
-    console.log("constructor post data", this.postData);
 
     this.buttons = "";
     this.pinnedClass = "";
@@ -55,7 +54,6 @@ export class Post extends HTMLElement {
     this.replyButton;
     this.replyFlag = "";
     if (postData.replyTo && postData.replyTo._id) {
-      console.log(postData.replyTo);
       const replyToUsername = postData.replyTo.postedBy.userName;
 
       this.replyFlag = `
@@ -314,32 +312,18 @@ export class Post extends HTMLElement {
     this.replyButton.addEventListener("click", this.replyHandler.bind(this));
   }
 
-  // pinPostHandler(event) {
-  //   // console.log(this.pinButton.classList.contains("active"));
-  //   const isActivePin = this.pinButton.classList.contains("active");
-  //   if (!isActivePin) {
-  //     const pinPostEvent = new Event("pin-post", { bubbles: true });
-  //     this.dispatchEvent(pinPostEvent);
-  //   } else {
-  //     //unpin event
-  //     const unPinPostEvent = new Event("unpin-post", { bubbles: true });
-  //     this.dispatchEvent(unPinPostEvent);
-  //   }
-  // }
-
   unpinPost() {
     this.pinButton.classList.remove("active");
     this.shadowRoot.querySelector(".pinnedPostText").innerHTML = "";
+
+    //for profile page
+    // const postsContainer = document.querySelector(".postsContainer");
+    // if (postsContainer) {
+    //   this.remove();
+    //   const unpinnedNode;
+    //   postsContainer.prepend(unpinnedNode);
+    // }
   }
-
-  // async deletePostHandler(event) {
-  //   const postId = this.postData._id;
-
-  //   //dispatch delete-post event
-  //   const deletePostEvent = new Event("delete-post", { bubbles: true });
-  //   deletePostEvent.postId = postId;
-  //   this.dispatchEvent(deletePostEvent);
-  // }
 
   async likeHandler(event) {
     let post = await fetch(
@@ -394,42 +378,30 @@ export class Post extends HTMLElement {
 
     if (post.retweetUsers.includes(this.states.userId)) {
       //retweet
-      console.log("retweet handler");
-      console.log("REPOST", repost);
       this.retweetButton.classList.add("active");
 
       const postCard = new Post(repost);
-      const postsArea = document.querySelector(".posts-area");
+      const postsArea =
+        document.querySelector(".posts-area") ||
+        document.querySelector(".postsContainer");
       postsArea.prepend(postCard);
-
-      // const retweetEvent = new Event("retweet", { bubbles: true });
-      // retweetEvent.repost = repost;
-      // this.dispatchEvent(retweetEvent);
     } else {
-      console.log("unretweet handler");
       // un-retweet
       this.retweetButton.classList.remove("active");
 
       const deleteTargetPostId = repost._id;
-      console.log(deleteTargetPostId);
       //get postCards
       let postCards = document.querySelectorAll("post-card");
 
       let deleteTargetPostCard;
       postCards.forEach((post) => {
-        console.log(post.postData._id);
         if (post.postData._id.toString() === deleteTargetPostId.toString()) {
           deleteTargetPostCard = post;
         }
       });
 
-      console.log(deleteTargetPostCard);
-
       deleteTargetPostCard.remove();
     }
-    // const retweetEvent = new Event("un-retweet", { bubbles: true });
-    // retweetEvent.repost = repost;
-    // this.dispatchEvent(retweetEvent);
   }
 
   replyHandler(evnet) {
@@ -461,11 +433,7 @@ export class Post extends HTMLElement {
   }
 
   pinPostHandler(event) {
-    // const postId = event.target.shadowRoot.querySelector(".post").dataset.id;
-
     const postId = this.shadowRoot.querySelector(".post").dataset.id;
-
-    console.log("target", event.target.classList.contains("active"));
 
     const isUnpinAction = event.target.classList.contains("active");
     if (!isUnpinAction) {
@@ -513,24 +481,6 @@ export class Post extends HTMLElement {
       );
   }
 
-  // unpinPostHandler(event) {
-  //   const postId = event.target.shadowRoot.querySelector(".post").dataset.id;
-
-  //   const postModal = new PostModal(
-  //     "unpin",
-  //     "Unpin this post?",
-  //     "This post will be unpinned from your profile page.",
-  //     "Unpin"
-  //   );
-
-  //   document
-  //     .querySelector("post-modal")
-  //     .addEventListener(
-  //       "confirm-modal",
-  //       this.modalConfirmHandler.bind(this, postId)
-  //     );
-  // }
-
   async modalConfirmHandler(postId, event) {
     if (event.action === "pin") {
       //pin the post
@@ -549,6 +499,7 @@ export class Post extends HTMLElement {
         this.patchPostResponse = await patchPostResponse.json();
 
         event.target.remove();
+
         this.updatePostsArea(event.action);
       } catch (error) {
         console.log(error);
@@ -641,19 +592,51 @@ export class Post extends HTMLElement {
       updatedCurrentPinnedPostNode = new Post(
         this.patchPostResponse.currentPinnedPost
       );
-      currentPinnedPostNode.replaceWith(updatedCurrentPinnedPostNode);
+
+      //for profile page
+      const pinnedPostContainer = document.querySelector(
+        ".pinnedPostContainer"
+      );
+
+      if (!pinnedPostContainer) {
+        //home page
+        currentPinnedPostNode.replaceWith(updatedCurrentPinnedPostNode);
+      }
+
+      if (pinnedPostContainer) {
+        //profile page
+        pinnedPostContainer.hidden = false;
+        currentPinnedPostNode.remove();
+        pinnedPostContainer.appendChild(updatedCurrentPinnedPostNode);
+      }
     } else if (action === "unpin") {
       let unpinnedPostNode;
 
       postCards.forEach((post) => {
         if (
-          post.postData._id.toString() === this.patchPostResponse.unpinnedPostId
+          post.postData._id.toString() ===
+          this.patchPostResponse.unpinnedPost._id
         ) {
           unpinnedPostNode = post;
         }
       });
 
-      unpinnedPostNode.unpinPost();
+      console.log(unpinnedPostNode);
+
+      //for profile page
+      const postsContainer = document.querySelector(".postsContainer");
+      if (!postsContainer) {
+        //home page
+        unpinnedPostNode.unpinPost();
+      }
+
+      if (postsContainer) {
+        unpinnedPostNode.remove();
+        console.log("patchPostResponse", this.patchPostResponse);
+        unpinnedPostNode = new Post(this.patchPostResponse.unpinnedPost);
+
+        postsContainer.prepend(unpinnedPostNode);
+      }
     } else if (action === "reply") {
       const replyPost = new Post(post);
       document.querySelector(".posts-area").prepend(replyPost);

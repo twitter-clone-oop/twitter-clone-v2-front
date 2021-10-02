@@ -149,6 +149,10 @@ export class Profile {
 
     postsData = await postsData.json();
 
+    postsData = postsData.filter((post) => {
+      return post.pinned === false;
+    });
+
     const postsContainer = document.querySelector(".postsContainer");
     this.outputPosts(postsData, postsContainer);
   }
@@ -159,6 +163,9 @@ export class Profile {
       container.hidden = true;
       return;
     }
+
+    console.log(posts);
+    console.log(typeof posts);
 
     posts.forEach((post) => {
       const postCard = new Post(post);
