@@ -54,10 +54,10 @@ export class Profile {
     }
 
     this.tabs = `
-      <a class="tab active">
+      <a class="tab posts-tab active">
         <span>Posts</span>
       </a>
-      <a class="tab">
+      <a class="tab replies-tab">
         <span>Replies</span>
       </a>
     `;
@@ -117,6 +117,10 @@ export class Profile {
     this.wrapper.innerHTML = this.profilePage;
 
     this.loadPosts();
+
+    this.selectedTab = "Posts";
+
+    this.registerEvents();
   }
 
   async loadPosts() {
@@ -133,7 +137,7 @@ export class Profile {
     pinnedPostData = await pinnedPostData.json();
 
     const pinnedPostContainer = document.querySelector(".pinnedPostContainer");
-
+    pinnedPostContainer.innerHTML = "";
     this.outputPosts(pinnedPostData, pinnedPostContainer);
 
     // posts
@@ -154,13 +158,38 @@ export class Profile {
     });
 
     const postsContainer = document.querySelector(".postsContainer");
+    postsContainer.innerHTML = "";
     this.outputPosts(postsData, postsContainer);
+  }
+
+  async loadReplies() {
+    //load replies
+
+    let url =
+      `${env.BACKEND_BASE_URL}/post/posts?` +
+      new URLSearchParams({
+        postedBy: this.profileUserId,
+        isReply: true,
+      });
+
+    let replies = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${this.token}`,
+      },
+    });
+    replies = await replies.json();
+
+    const pinnedPostContainer = document.querySelector(".pinnedPostContainer");
+    pinnedPostContainer.innerHTML = "";
+    const postsContainer = document.querySelector(".postsContainer");
+    postsContainer.innerHTML = "";
+
+    this.outputPosts(replies, postsContainer);
   }
 
   outputPosts(posts, container) {
     container.innerHTML = "";
     if (posts.length === 0) {
-      container.hidden = true;
       return;
     }
 
@@ -171,6 +200,29 @@ export class Profile {
       const postCard = new Post(post);
       container.appendChild(postCard);
     });
+  }
+
+  registerEvents() {
+    const tabsContainer = document.querySelector(".tabsContainer");
+    tabsContainer.addEventListener("click", this.tabSelectHandler.bind(this));
+  }
+
+  tabSelectHandler(event) {
+    const selectedTabElement = event.target;
+    this.selectedTab = selectedTabElement.innerText;
+
+    const postTab = document.querySelector(".posts-tab");
+    const repliesTab = document.querySelector(".replies-tab");
+
+    if (this.selectedTab === "Posts") {
+      postTab.classList.add("active");
+      repliesTab.classList.remove("active");
+      this.loadPosts();
+    } else {
+      postTab.classList.remove("active");
+      repliesTab.classList.add("active");
+      this.loadReplies();
+    }
   }
 
   // async getUser(id) {

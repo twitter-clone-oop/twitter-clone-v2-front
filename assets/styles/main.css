@@ -48,7 +48,8 @@ button {
 }
 
 button i, 
-button span {
+button span,
+.tab span {
   pointer-events: none;
 }
 
