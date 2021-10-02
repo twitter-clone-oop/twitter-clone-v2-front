@@ -9,7 +9,7 @@ import { PostModal } from "../Components/PostModal.js";
 
 import env from "../../env.js";
 
-class Index {
+export class Index {
   constructor() {
     // this.sessionStorageClearHandler();
 
@@ -64,24 +64,6 @@ class Index {
         this.isAuth = await this.checkAuth(this.token);
       });
     }
-  }
-
-  pinPostHandler(event) {
-    const postId = event.target.shadowRoot.querySelector(".post").dataset.id;
-
-    const postModal = new PostModal(
-      "pin",
-      "Pin this post?",
-      "This post will appear at the top of your profile. You can only pin one post.",
-      "Pin"
-    );
-
-    document
-      .querySelector("post-modal")
-      .addEventListener(
-        "confirm-modal",
-        this.modalConfirmHandler.bind(this, postId)
-      );
   }
 
   unpinPostHandler(event) {
@@ -247,7 +229,7 @@ class Index {
 
     mainSectionContainer.removeChild(oldPostsArea);
     newPostsArea.innerHTML = "";
-    newPostsArea.addEventListener("pin-post", this.pinPostHandler.bind(this));
+    // newPostsArea.addEventListener("pin-post", this.pinPostHandler.bind(this));
 
     newPostsArea.addEventListener(
       "unpin-post",
