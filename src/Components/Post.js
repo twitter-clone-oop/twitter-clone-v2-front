@@ -323,14 +323,14 @@ export class Post extends HTMLElement {
     this.shadowRoot.querySelector(".pinnedPostText").innerHTML = "";
   }
 
-  async deletePostHandler(event) {
-    const postId = this.postData._id;
+  // async deletePostHandler(event) {
+  //   const postId = this.postData._id;
 
-    //dispatch delete-post event
-    const deletePostEvent = new Event("delete-post", { bubbles: true });
-    deletePostEvent.postId = postId;
-    this.dispatchEvent(deletePostEvent);
-  }
+  //   //dispatch delete-post event
+  //   const deletePostEvent = new Event("delete-post", { bubbles: true });
+  //   deletePostEvent.postId = postId;
+  //   this.dispatchEvent(deletePostEvent);
+  // }
 
   async likeHandler(event) {
     let post = await fetch(
@@ -446,6 +446,27 @@ export class Post extends HTMLElement {
       );
   }
 
+  deletePostHandler(event) {
+    //show modal
+    const postId = this.shadowRoot.querySelector(".post").dataset.id;
+
+    const deletePostModal = new PostModal(
+      "delete-post",
+      "Delete this post?",
+      "This post will be deleted.",
+      "Delete" //button color -> red
+    );
+
+    document
+      .querySelector("post-modal")
+      .addEventListener(
+        "confirm-modal",
+        this.modalConfirmHandler.bind(this, postId)
+      );
+
+    //addEventListener : confirm-delete-post event
+  }
+
   // unpinPostHandler(event) {
   //   const postId = event.target.shadowRoot.querySelector(".post").dataset.id;
 
@@ -518,10 +539,7 @@ export class Post extends HTMLElement {
 
       event.target.remove();
 
-      let deleteTargetPostCard = this.postCards.filter((post) => {
-        return post.postData._id === deletedPostId;
-      })[0];
-      deleteTargetPostCard.remove();
+      this.remove();
     } else if (event.action === "reply") {
       const replyTo = postId;
       const content = event.content;

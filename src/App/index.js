@@ -84,26 +84,26 @@ export class Index {
   //     );
   // }
 
-  deletePostHandler(event) {
-    //show modal
-    const postId = event.postId;
+  // deletePostHandler(event) {
+  //   //show modal
+  //   const postId = event.postId;
 
-    const deletePostModal = new PostModal(
-      "delete-post",
-      "Delete this post?",
-      "This post will be deleted.",
-      "Delete" //button color -> red
-    );
+  //   const deletePostModal = new PostModal(
+  //     "delete-post",
+  //     "Delete this post?",
+  //     "This post will be deleted.",
+  //     "Delete" //button color -> red
+  //   );
 
-    document
-      .querySelector("post-modal")
-      .addEventListener(
-        "confirm-modal",
-        this.modalConfirmHandler.bind(this, postId)
-      );
+  //   document
+  //     .querySelector("post-modal")
+  //     .addEventListener(
+  //       "confirm-modal",
+  //       this.modalConfirmHandler.bind(this, postId)
+  //     );
 
-    //addEventListener : confirm-delete-post event
-  }
+  //   //addEventListener : confirm-delete-post event
+  // }
 
   async modalConfirmHandler(postId, event) {
     console.log("event.action", event.action);
@@ -236,10 +236,10 @@ export class Index {
     //   this.unpinPostHandler.bind(this)
     // );
 
-    newPostsArea.addEventListener(
-      "delete-post",
-      this.deletePostHandler.bind(this)
-    );
+    // newPostsArea.addEventListener(
+    //   "delete-post",
+    //   this.deletePostHandler.bind(this)
+    // );
 
     newPostsArea.addEventListener("retweet", this.retweetHandler.bind(this));
     newPostsArea.addEventListener(
