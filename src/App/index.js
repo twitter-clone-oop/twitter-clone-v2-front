@@ -105,84 +105,84 @@ export class Index {
   //   //addEventListener : confirm-delete-post event
   // }
 
-  async modalConfirmHandler(postId, event) {
-    console.log("event.action", event.action);
-    if (event.action === "pin") {
-      //pin the post
-      try {
-        let patchPostResponse = await fetch(
-          `${env.BACKEND_BASE_URL}/post/${postId}`,
-          {
-            method: "PATCH",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${this.token}`,
-            },
-            body: JSON.stringify({ action: "pin", filter: { pinned: true } }),
-          }
-        );
-        this.patchPostResponse = await patchPostResponse.json();
+  // async modalConfirmHandler(postId, event) {
+  //   console.log("event.action", event.action);
+  //   if (event.action === "pin") {
+  //     //pin the post
+  //     try {
+  //       let patchPostResponse = await fetch(
+  //         `${env.BACKEND_BASE_URL}/post/${postId}`,
+  //         {
+  //           method: "PATCH",
+  //           headers: {
+  //             "Content-Type": "application/json",
+  //             Authorization: `Bearer ${this.token}`,
+  //           },
+  //           body: JSON.stringify({ action: "pin", filter: { pinned: true } }),
+  //         }
+  //       );
+  //       this.patchPostResponse = await patchPostResponse.json();
 
-        event.target.remove();
-        this.updatePostsArea(event.action);
-      } catch (error) {
-        console.log(error);
-      }
-    } else if (event.action === "unpin") {
-      let patchPostResponse = await fetch(
-        `${env.BACKEND_BASE_URL}/post/${postId}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${this.token}`,
-          },
-          body: JSON.stringify({ action: "unpin" }),
-        }
-      );
-      this.patchPostResponse = await patchPostResponse.json();
+  //       event.target.remove();
+  //       this.updatePostsArea(event.action);
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   } else if (event.action === "unpin") {
+  //     let patchPostResponse = await fetch(
+  //       `${env.BACKEND_BASE_URL}/post/${postId}`,
+  //       {
+  //         method: "PATCH",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           Authorization: `Bearer ${this.token}`,
+  //         },
+  //         body: JSON.stringify({ action: "unpin" }),
+  //       }
+  //     );
+  //     this.patchPostResponse = await patchPostResponse.json();
 
-      event.target.remove();
-      this.updatePostsArea(event.action);
-    } else if (event.action === "delete-post") {
-      //delete the post
-      let deletedPostId = await fetch(
-        `${env.BACKEND_BASE_URL}/post/${postId}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${this.token}`,
-          },
-        }
-      );
-      deletedPostId = await deletedPostId.json();
-      deletedPostId = deletedPostId.deletedPostId;
+  //     event.target.remove();
+  //     this.updatePostsArea(event.action);
+  //   } else if (event.action === "delete-post") {
+  //     //delete the post
+  //     let deletedPostId = await fetch(
+  //       `${env.BACKEND_BASE_URL}/post/${postId}`,
+  //       {
+  //         method: "DELETE",
+  //         headers: {
+  //           Authorization: `Bearer ${this.token}`,
+  //         },
+  //       }
+  //     );
+  //     deletedPostId = await deletedPostId.json();
+  //     deletedPostId = deletedPostId.deletedPostId;
 
-      event.target.remove();
+  //     event.target.remove();
 
-      let deleteTargetPostCard = this.postCards.filter((post) => {
-        return post.postData._id === deletedPostId;
-      })[0];
-      deleteTargetPostCard.remove();
-    } else if (event.action === "reply") {
-      const replyTo = postId;
-      const content = event.content;
-      let response = await fetch(`${env.BACKEND_BASE_URL}/post`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${this.token}`,
-        },
-        body: JSON.stringify({ action: event.action, replyTo, content }),
-      });
+  //     let deleteTargetPostCard = this.postCards.filter((post) => {
+  //       return post.postData._id === deletedPostId;
+  //     })[0];
+  //     deleteTargetPostCard.remove();
+  //   } else if (event.action === "reply") {
+  //     const replyTo = postId;
+  //     const content = event.content;
+  //     let response = await fetch(`${env.BACKEND_BASE_URL}/post`, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         Authorization: `Bearer ${this.token}`,
+  //       },
+  //       body: JSON.stringify({ action: event.action, replyTo, content }),
+  //     });
 
-      response = await response.json();
-      event.target.remove();
-      // call func with post
+  //     response = await response.json();
+  //     event.target.remove();
+  //     // call func with post
 
-      this.updatePostsArea(event.action, response.createdPost);
-    }
-  }
+  //     this.updatePostsArea(event.action, response.createdPost);
+  //   }
+  // }
 
   // retweetHandler(event) {
   //   const repost = event.repost;
@@ -247,7 +247,7 @@ export class Index {
     //   this.unRetweetHandler.bind(this)
     // );
 
-    newPostsArea.addEventListener("reply", this.replyHandler.bind(this));
+    // newPostsArea.addEventListener("reply", this.replyHandler.bind(this));
 
     const posts = await this._getPosts();
 
@@ -261,60 +261,60 @@ export class Index {
     mainSectionContainer.appendChild(newPostsArea);
   }
 
-  updatePostsArea(action, post = null) {
-    const postCards = document.querySelectorAll("post-card");
-    console.log("action", action);
-    if (action === "pin") {
-      let prevPinnedPostNode;
-      let currentPinnedPostNode;
-      let updatedCurrentPinnedPostNode;
+  // updatePostsArea(action, post = null) {
+  //   const postCards = document.querySelectorAll("post-card");
+  //   console.log("action", action);
+  //   if (action === "pin") {
+  //     let prevPinnedPostNode;
+  //     let currentPinnedPostNode;
+  //     let updatedCurrentPinnedPostNode;
 
-      postCards.forEach((post) => {
-        if (this.patchPostResponse.prevPinnedPost) {
-          if (
-            post.postData._id.toString() ===
-            this.patchPostResponse.prevPinnedPost._id
-          ) {
-            prevPinnedPostNode = post;
-          }
-        }
-        if (
-          post.postData._id.toString() ===
-          this.patchPostResponse.currentPinnedPost._id
-        ) {
-          currentPinnedPostNode = post;
-        }
-      });
+  //     postCards.forEach((post) => {
+  //       if (this.patchPostResponse.prevPinnedPost) {
+  //         if (
+  //           post.postData._id.toString() ===
+  //           this.patchPostResponse.prevPinnedPost._id
+  //         ) {
+  //           prevPinnedPostNode = post;
+  //         }
+  //       }
+  //       if (
+  //         post.postData._id.toString() ===
+  //         this.patchPostResponse.currentPinnedPost._id
+  //       ) {
+  //         currentPinnedPostNode = post;
+  //       }
+  //     });
 
-      if (this.patchPostResponse.prevPinnedPost) {
-        const updatedPrevPinnedPostNode = new Post(
-          this.patchPostResponse.prevPinnedPost
-        );
+  //     if (this.patchPostResponse.prevPinnedPost) {
+  //       const updatedPrevPinnedPostNode = new Post(
+  //         this.patchPostResponse.prevPinnedPost
+  //       );
 
-        prevPinnedPostNode.replaceWith(updatedPrevPinnedPostNode);
-      }
+  //       prevPinnedPostNode.replaceWith(updatedPrevPinnedPostNode);
+  //     }
 
-      updatedCurrentPinnedPostNode = new Post(
-        this.patchPostResponse.currentPinnedPost
-      );
-      currentPinnedPostNode.replaceWith(updatedCurrentPinnedPostNode);
-    } else if (action === "unpin") {
-      let unpinnedPostNode;
+  //     updatedCurrentPinnedPostNode = new Post(
+  //       this.patchPostResponse.currentPinnedPost
+  //     );
+  //     currentPinnedPostNode.replaceWith(updatedCurrentPinnedPostNode);
+  //   } else if (action === "unpin") {
+  //     let unpinnedPostNode;
 
-      postCards.forEach((post) => {
-        if (
-          post.postData._id.toString() === this.patchPostResponse.unpinnedPostId
-        ) {
-          unpinnedPostNode = post;
-        }
-      });
+  //     postCards.forEach((post) => {
+  //       if (
+  //         post.postData._id.toString() === this.patchPostResponse.unpinnedPostId
+  //       ) {
+  //         unpinnedPostNode = post;
+  //       }
+  //     });
 
-      unpinnedPostNode.unpinPost();
-    } else if (action === "reply") {
-      const replyPost = new Post(post);
-      document.querySelector(".posts-area").prepend(replyPost);
-    }
-  }
+  //     unpinnedPostNode.unpinPost();
+  //   } else if (action === "reply") {
+  //     const replyPost = new Post(post);
+  //     document.querySelector(".posts-area").prepend(replyPost);
+  //   }
+  // }
 
   loadMainPage() {
     const mainLayout = `
@@ -339,26 +339,26 @@ export class Index {
     this.initNavbar();
   }
 
-  replyHandler(event) {
-    const replyTo = event.replyTo;
-    const originalPostData = event.originalPostData;
+  // replyHandler(event) {
+  //   const replyTo = event.replyTo;
+  //   const originalPostData = event.originalPostData;
 
-    const replyModal = new PostModal(
-      "reply",
-      "Reply",
-      "",
-      "Reply",
-      `${env.BACKEND_BASE_URL}/${this.userProfile.profilePic}`,
-      originalPostData
-    );
+  //   const replyModal = new PostModal(
+  //     "reply",
+  //     "Reply",
+  //     "",
+  //     "Reply",
+  //     `${env.BACKEND_BASE_URL}/${this.userProfile.profilePic}`,
+  //     originalPostData
+  //   );
 
-    document
-      .querySelector("post-modal")
-      .addEventListener(
-        "confirm-modal",
-        this.modalConfirmHandler.bind(this, replyTo)
-      );
-  }
+  //   document
+  //     .querySelector("post-modal")
+  //     .addEventListener(
+  //       "confirm-modal",
+  //       this.modalConfirmHandler.bind(this, replyTo)
+  //     );
+  // }
 
   getStates() {
     return {

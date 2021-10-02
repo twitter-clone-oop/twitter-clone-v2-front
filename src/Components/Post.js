@@ -9,6 +9,9 @@ export class Post extends HTMLElement {
 
     this.states = this.getStates();
 
+    this.userProfile;
+    this.getUserProfile();
+
     this.postData = postData;
     console.log("constructor post data", this.postData);
 
@@ -79,8 +82,6 @@ export class Post extends HTMLElement {
 
     this.postData._id = postData._id;
 
-    ///
-    console.log("postdata", this.postData);
     this.retweetButtonActiveClass =
       this.postData.retweetUsers &&
       this.postData.retweetUsers.includes(this.states.userId)
@@ -432,12 +433,24 @@ export class Post extends HTMLElement {
   }
 
   replyHandler(evnet) {
-    const postId = this.postData._id;
+    const replyTo = this.postData._id;
+    const originalPostData = this.postData;
 
-    const replyPostEvent = new Event("reply", { bubbles: true });
-    replyPostEvent.replyTo = postId;
-    replyPostEvent.originalPostData = this.postData;
-    this.dispatchEvent(replyPostEvent);
+    const replyModal = new PostModal(
+      "reply",
+      "Reply",
+      "",
+      "Reply",
+      `${env.BACKEND_BASE_URL}/${this.userProfile.profilePic}`,
+      originalPostData
+    );
+
+    document
+      .querySelector("post-modal")
+      .addEventListener(
+        "confirm-modal",
+        this.modalConfirmHandler.bind(this, replyTo)
+      );
   }
 
   getStates() {
@@ -652,6 +665,22 @@ export class Post extends HTMLElement {
       token: sessionStorage.getItem("token"),
       userId: sessionStorage.getItem("userId"),
     };
+  }
+
+  async getUserProfile() {
+    this.userProfile = await this.fetchUserProfile();
+  }
+
+  async fetchUserProfile() {
+    let user = await fetch(`${env.BACKEND_BASE_URL}/user/profile`, {
+      headers: {
+        Authorization: "Bearer " + this.states.token,
+      },
+      method: "GET",
+    });
+
+    user = await user.json();
+    return user;
   }
 }
 
