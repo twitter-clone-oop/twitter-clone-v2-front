@@ -449,7 +449,9 @@ class Index {
   }
 
   navProfileHandler() {
-    this.Profile = new Profile(this.userId, this.userId, this.token);
+    const profileUser = this.userProfile;
+    const user = this.userProfile;
+    this.Profile = new Profile(profileUser, user, this.token);
   }
 
   setAutoLogout = (milliseconds) => {

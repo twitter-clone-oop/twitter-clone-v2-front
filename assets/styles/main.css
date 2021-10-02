@@ -1,6 +1,7 @@
 :root {
   --blue: #1fa2f1;
   --blueLight: #9bd1f9;
+  --blueBackground: rgba(212, 237, 255, 0.6);
   --buttonHoverBg: #d4edff;
   --lightGrey: rgb(230, 236, 240);
   --grayButtonText: rgba(0, 0, 0, 0.34);
@@ -40,6 +41,17 @@ h1 {
   margin: 0;
 }
 
+button {
+  background-color: transparent;
+  border: none;
+  color: var(--grayButtonText);
+}
+
+button i, 
+button span {
+  pointer-events: none;
+}
+
 button:focus {
   outline: none;
   box-shadow: none;
@@ -64,4 +76,139 @@ button:focus {
 
 .titleContainer h1 {
   flex: 1;
+}
+
+.userImageContainer {
+  width: 50px;
+  height: 50px;
+}
+
+.userImageContainer img {
+  width: 100%;
+  border-radius: 50%;
+  background-color: #fff;
+}
+
+.coverPhotoContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.coverPhotoContainer img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profileHeaderContainer .coverPhotoSection {
+  height: 180px;
+  background-color: var(--blue);
+  position: relative;
+}
+
+.profileHeaderContainer .userImageContainer {
+  height: 132px;
+  width: 132px;
+  margin-left: var(--spacing);
+  position: absolute;
+  bottom: -66px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.profileHeaderContainer .userImageContainer img {
+  
+  border: 4px solid #fff;
+}
+
+.profileHeaderContainer .profileButtonsContainer {
+  text-align: right;
+  padding: var(--spacing);
+  min-height: 66px;
+}
+
+.profileHeaderContainer .userDetailContainer {
+  display: flex;
+  flex-direction: column;
+  padding: 0 var(--spacing);
+  background-color: red;
+}
+
+.profilePictureButton,
+.coverPhotoButton {
+  position: absolute;
+  font-size: 50px;
+  color: rgba(0, 0, 0, 0.6);
+  display: none; 
+}
+
+.userImageContainer:hover .profilePictureButton,
+.coverPhotoContainer:hover .coverPhotoButton {
+  display: block;
+}
+
+
+.displayName {
+  font-weight: bold;
+}
+
+.username,
+.date {
+  color: var(--grayText);
+}
+
+.followersContainer .value {
+  font-weight: bold;
+  margin-right: 5px;
+}
+
+.followersContainer span:not(.value) {
+  color: var(--grayText);
+}
+
+.followersContainer a {
+  margin-right: 15px;
+}
+
+.followersContainer a:hover {
+  border-bottom: 1px solid #000;
+}
+
+
+.tabsContainer {
+  display: flex;
+  border-bottom: 1px solid var(--lightGrey);
+  flex-shrink: 0;
+}
+
+.tab {
+  flex: 1;
+  height: 52px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+}
+
+.tab span {
+  color: var(--grayText);
+}
+
+.tab.active {
+  border-bottom: 2px solid var(--blue);
+}
+
+.tab.active span {
+  color: var(--blue)
+}
+
+.tab:hover {
+  background-color: var(--blueBackground);
+}
+
+.tab:hover span {
+  color: var(--blue);
 }
