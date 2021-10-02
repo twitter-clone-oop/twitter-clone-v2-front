@@ -184,26 +184,26 @@ export class Index {
     }
   }
 
-  retweetHandler(event) {
-    const repost = event.repost;
-    const postCard = new Post(repost);
-    this.postCards.push(postCard);
-    const postsArea = document.querySelector(".posts-area");
-    postsArea.prepend(postCard);
-  }
+  // retweetHandler(event) {
+  //   const repost = event.repost;
+  //   const postCard = new Post(repost);
+  //   this.postCards.push(postCard);
+  //   const postsArea = document.querySelector(".posts-area");
+  //   postsArea.prepend(postCard);
+  // }
 
-  unRetweetHandler(event) {
-    const repost = event.repost;
-    const deleteTargetPostId = repost._id;
+  // unRetweetHandler(event) {
+  //   const repost = event.repost;
+  //   const deleteTargetPostId = repost._id;
 
-    let deleteTargetPostCard = this.postCards.filter((post) => {
-      return post.postData._id === deleteTargetPostId;
-    })[0];
+  //   let deleteTargetPostCard = this.postCards.filter((post) => {
+  //     return post.postData._id === deleteTargetPostId;
+  //   })[0];
 
-    console.log(deleteTargetPostCard);
+  //   console.log(deleteTargetPostCard);
 
-    deleteTargetPostCard.remove();
-  }
+  //   deleteTargetPostCard.remove();
+  // }
 
   async _getPosts() {
     let posts = await fetch(
@@ -241,18 +241,18 @@ export class Index {
     //   this.deletePostHandler.bind(this)
     // );
 
-    newPostsArea.addEventListener("retweet", this.retweetHandler.bind(this));
-    newPostsArea.addEventListener(
-      "un-retweet",
-      this.unRetweetHandler.bind(this)
-    );
+    // newPostsArea.addEventListener("retweet", this.retweetHandler.bind(this));
+    // newPostsArea.addEventListener(
+    //   "un-retweet",
+    //   this.unRetweetHandler.bind(this)
+    // );
 
     newPostsArea.addEventListener("reply", this.replyHandler.bind(this));
 
     const posts = await this._getPosts();
 
     posts.forEach((post) => {
-      console.log(post);
+      console.log("index post", post);
       const postCard = new Post(post);
       newPostsArea.appendChild(postCard);
       this.postCards.push(postCard);

@@ -10,6 +10,7 @@ export class Post extends HTMLElement {
     this.states = this.getStates();
 
     this.postData = postData;
+    console.log("constructor post data", this.postData);
 
     this.buttons = "";
     this.pinnedClass = "";
@@ -71,13 +72,18 @@ export class Post extends HTMLElement {
 
     // retweet
 
-    this.isRetweet = postData.retweetData !== undefined;
+    this.isRetweet = this.postData.retweetData !== undefined;
+    // this.isRetweet = this.postData.retweetData !== null;
     this.retweetedBy = this.isRetweet ? postData.postedBy.userName : "";
-    postData = this.isRetweet ? postData.retweetData : postData;
+    this.postData = this.isRetweet ? postData.retweetData : postData;
 
+    this.postData._id = postData._id;
+
+    ///
+    console.log("postdata", this.postData);
     this.retweetButtonActiveClass =
-      postData.retweetUsers &&
-      postData.retweetUsers.includes(this.states.userId)
+      this.postData.retweetUsers &&
+      this.postData.retweetUsers.includes(this.states.userId)
         ? "active"
         : "";
 
@@ -92,8 +98,8 @@ export class Post extends HTMLElement {
     }
 
     this.retweetCount =
-      postData.retweetUsers && postData.retweetUsers.length !== 0
-        ? postData.retweetUsers.length
+      this.postData.retweetUsers && this.postData.retweetUsers.length !== 0
+        ? this.postData.retweetUsers.length
         : "";
 
     this.retweetButton;
@@ -232,30 +238,32 @@ export class Post extends HTMLElement {
 
       </style>
 
-      <div class="post" data-id="${postData._id}">
+      <div class="post" data-id="${this.postData._id}">
         <div class="postActionContainer">
           ${retweetText}
         </div>
         <div class="mainContentContainer">
           <div class="userImageContainer">
-            <img src="${env.BACKEND_BASE_URL}/${postData.postedBy.profilePic}">
+            <img src="${env.BACKEND_BASE_URL}/${
+      this.postData.postedBy.profilePic
+    }">
           </div>
           <div class="postContentContainer">
             <div class="pinnedPostText">${this.pinnedPostText}</div>
             <div class="header">
               <a href="user_profile_page_link" class="displayName">${
-                postData.postedBy.firstName
-              } ${postData.postedBy.lastName}</a>
-              <span class="username">@${postData.postedBy.userName}</span>
+                this.postData.postedBy.firstName
+              } ${this.postData.postedBy.lastName}</a>
+              <span class="username">@${this.postData.postedBy.userName}</span>
               <span class="date">${timeDifference(
                 new Date(),
-                new Date(postData.createdAt)
+                new Date(this.postData.createdAt)
               )}</span>
               ${this.buttons}
             </div>
             ${this.replyFlag}
             <div class="postBody">
-              <span>${postData.content}</span>
+              <span>${this.postData.content}</span>
             </div>
             <div class="postFooter">
               <div class="postButtonContainer">
@@ -362,6 +370,8 @@ export class Post extends HTMLElement {
 
     if (!postId) return;
 
+    const isRetweet = !event.target.classList.contains("active");
+
     let response = await fetch(`${env.BACKEND_BASE_URL}/post/${postId}`, {
       method: "PATCH",
       headers: {
@@ -382,18 +392,43 @@ export class Post extends HTMLElement {
     retweetCountSpan.innerText = post.retweetUsers.length || "";
 
     if (post.retweetUsers.includes(this.states.userId)) {
+      //retweet
+      console.log("retweet handler");
+      console.log("REPOST", repost);
       this.retweetButton.classList.add("active");
 
-      const retweetEvent = new Event("retweet", { bubbles: true });
-      retweetEvent.repost = repost;
-      this.dispatchEvent(retweetEvent);
+      const postCard = new Post(repost);
+      const postsArea = document.querySelector(".posts-area");
+      postsArea.prepend(postCard);
+
+      // const retweetEvent = new Event("retweet", { bubbles: true });
+      // retweetEvent.repost = repost;
+      // this.dispatchEvent(retweetEvent);
     } else {
+      console.log("unretweet handler");
+      // un-retweet
       this.retweetButton.classList.remove("active");
 
-      const retweetEvent = new Event("un-retweet", { bubbles: true });
-      retweetEvent.repost = repost;
-      this.dispatchEvent(retweetEvent);
+      const deleteTargetPostId = repost._id;
+      console.log(deleteTargetPostId);
+      //get postCards
+      let postCards = document.querySelectorAll("post-card");
+
+      let deleteTargetPostCard;
+      postCards.forEach((post) => {
+        console.log(post.postData._id);
+        if (post.postData._id.toString() === deleteTargetPostId.toString()) {
+          deleteTargetPostCard = post;
+        }
+      });
+
+      console.log(deleteTargetPostCard);
+
+      deleteTargetPostCard.remove();
     }
+    // const retweetEvent = new Event("un-retweet", { bubbles: true });
+    // retweetEvent.repost = repost;
+    // this.dispatchEvent(retweetEvent);
   }
 
   replyHandler(evnet) {
@@ -463,8 +498,6 @@ export class Post extends HTMLElement {
         "confirm-modal",
         this.modalConfirmHandler.bind(this, postId)
       );
-
-    //addEventListener : confirm-delete-post event
   }
 
   // unpinPostHandler(event) {
