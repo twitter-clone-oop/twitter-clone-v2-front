@@ -416,14 +416,27 @@ export class Post extends HTMLElement {
     // const postId = event.target.shadowRoot.querySelector(".post").dataset.id;
 
     const postId = this.shadowRoot.querySelector(".post").dataset.id;
-    console.log("POSTID: ", postId);
 
-    const postModal = new PostModal(
-      "pin",
-      "Pin this post?",
-      "This post will appear at the top of your profile. You can only pin one post.",
-      "Pin"
-    );
+    console.log("target", event.target.classList.contains("active"));
+
+    const isUnpinAction = event.target.classList.contains("active");
+    if (!isUnpinAction) {
+      //pin action
+      const postModal = new PostModal(
+        "pin",
+        "Pin this post?",
+        "This post will appear at the top of your profile. You can only pin one post.",
+        "Pin"
+      );
+    } else {
+      //unpin action
+      const postModal = new PostModal(
+        "unpin",
+        "Unpin this post?",
+        "This post will be unpinned from your profile page.",
+        "Unpin"
+      );
+    }
 
     document
       .querySelector("post-modal")
@@ -433,8 +446,25 @@ export class Post extends HTMLElement {
       );
   }
 
+  // unpinPostHandler(event) {
+  //   const postId = event.target.shadowRoot.querySelector(".post").dataset.id;
+
+  //   const postModal = new PostModal(
+  //     "unpin",
+  //     "Unpin this post?",
+  //     "This post will be unpinned from your profile page.",
+  //     "Unpin"
+  //   );
+
+  //   document
+  //     .querySelector("post-modal")
+  //     .addEventListener(
+  //       "confirm-modal",
+  //       this.modalConfirmHandler.bind(this, postId)
+  //     );
+  // }
+
   async modalConfirmHandler(postId, event) {
-    console.log("event.action", event.action);
     if (event.action === "pin") {
       //pin the post
       try {
@@ -514,7 +544,6 @@ export class Post extends HTMLElement {
 
   updatePostsArea(action, post = null) {
     const postCards = document.querySelectorAll("post-card");
-    console.log("action", action);
     if (action === "pin") {
       let prevPinnedPostNode;
       let currentPinnedPostNode;

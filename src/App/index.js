@@ -66,23 +66,23 @@ export class Index {
     }
   }
 
-  unpinPostHandler(event) {
-    const postId = event.target.shadowRoot.querySelector(".post").dataset.id;
+  // unpinPostHandler(event) {
+  //   const postId = event.target.shadowRoot.querySelector(".post").dataset.id;
 
-    const postModal = new PostModal(
-      "unpin",
-      "Unpin this post?",
-      "This post will be unpinned from your profile page.",
-      "Unpin"
-    );
+  //   const postModal = new PostModal(
+  //     "unpin",
+  //     "Unpin this post?",
+  //     "This post will be unpinned from your profile page.",
+  //     "Unpin"
+  //   );
 
-    document
-      .querySelector("post-modal")
-      .addEventListener(
-        "confirm-modal",
-        this.modalConfirmHandler.bind(this, postId)
-      );
-  }
+  //   document
+  //     .querySelector("post-modal")
+  //     .addEventListener(
+  //       "confirm-modal",
+  //       this.modalConfirmHandler.bind(this, postId)
+  //     );
+  // }
 
   deletePostHandler(event) {
     //show modal
@@ -231,10 +231,10 @@ export class Index {
     newPostsArea.innerHTML = "";
     // newPostsArea.addEventListener("pin-post", this.pinPostHandler.bind(this));
 
-    newPostsArea.addEventListener(
-      "unpin-post",
-      this.unpinPostHandler.bind(this)
-    );
+    // newPostsArea.addEventListener(
+    //   "unpin-post",
+    //   this.unpinPostHandler.bind(this)
+    // );
 
     newPostsArea.addEventListener(
       "delete-post",
